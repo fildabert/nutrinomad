@@ -1,4 +1,5 @@
 import {
+  Alert,
   Box,
   Button,
   Container,
@@ -15,11 +16,13 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useState } from 'react';
 import Navbar from '../components/Navbar';
 import PaperForm from '../components/PaperForm';
+import { useSignIn } from '../hooks/useSignIn';
 
 const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [signIn, isError, errorMessage] = useSignIn();
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -29,7 +32,7 @@ const SignIn = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(email, password);
+    await signIn(email, password);
   };
 
   return (
@@ -39,26 +42,27 @@ const SignIn = () => {
       </Container>
       <PaperForm onSubmit={handleSubmit}>
         <Typography className="text-2xl text-center">Sign in</Typography>
+        {isError && <Alert severity="error">{errorMessage}</Alert>}
         <TextField
           required
-          id="standard-required"
           label="Email"
           variant="outlined"
           className="mt-8 mb-4"
           type={'email'}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          error={isError ? true : false}
         />
         <FormControl variant="outlined" className="my-4">
-          <InputLabel htmlFor="outlined-adornment-password" required>
+          <InputLabel required error={isError ? true : false}>
             Password
           </InputLabel>
           <OutlinedInput
             required
-            id="outlined-adornment-password"
             type={showPassword ? 'text' : 'password'}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            error={isError ? true : false}
             endAdornment={
               <InputAdornment position="end">
                 <IconButton

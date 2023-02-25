@@ -4,11 +4,9 @@ import './index.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material';
 import LandingPage from './pages/LandingPage';
-import BodyMetrics from './pages/BodyMetrics';
-import ActivityLevel from './pages/ActivityLevel';
-import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
 import { AuthContextProvider } from './context/AuthContext';
+import Form from './pages/Form';
 
 const router = createBrowserRouter([
   {
@@ -16,19 +14,11 @@ const router = createBrowserRouter([
     element: <LandingPage />,
   },
   {
-    path: '/create/body-metrics',
-    element: <BodyMetrics />,
+    path: '/sign-up',
+    element: <Form />,
   },
   {
-    path: '/create/activity-level',
-    element: <ActivityLevel />,
-  },
-  {
-    path: '/create/sign-up',
-    element: <SignUp />,
-  },
-  {
-    path: '/create/sign-in',
+    path: '/sign-in',
     element: <SignIn />,
   },
 ]);

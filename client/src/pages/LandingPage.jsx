@@ -19,7 +19,7 @@ const LandingPage = () => {
           <Button
             variant="contained"
             className="w-32 text-white"
-            href="/create/body-metrics"
+            href="/sign-up"
           >
             Sign Up
           </Button>

@@ -86,7 +86,9 @@ userSchema.statics.signup = async function (
   }
 
   if (!validator.isStrongPassword(password)) {
-    throw Error('Password is not strong enough.');
+    throw Error(
+      'Password must contain a combination of uppercase letters, lowercase letters, numbers, and symbols.'
+    );
   }
 
   const emailExists = await this.findOne({ email });

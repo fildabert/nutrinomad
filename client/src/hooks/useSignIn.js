@@ -3,36 +3,21 @@ import axios from 'axios';
 import { useAuthContext } from './useAuthContext';
 import { ACTIONS } from '../context/AuthContext';
 
-export const useSignUp = () => {
+export const useSignIn = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [isError, setIsError] = useState(null);
   const { dispatch } = useAuthContext();
 
-  const signUp = async (
-    name,
-    email,
-    password,
-    sex,
-    age,
-    height,
-    weight,
-    activityLevel
-  ) => {
-    setErrorMessage(null);
-    setIsError(false);
+  const signIn = async (email, password) => {
+    setIsError(null);
 
     try {
-      const response = await axios.post('/api/users/signUp', {
-        name,
+      const response = await axios.post('/api/users/signIn', {
         email,
         password,
-        sex,
-        age,
-        height,
-        weight,
-        activityLevel,
       });
-      const data = await response.data;
+
+      const data = response.data;
 
       if (response.status === 200) {
         // save user to local storage
@@ -48,5 +33,5 @@ export const useSignUp = () => {
     }
   };
 
-  return [signUp, isError, errorMessage];
+  return [signIn, isError, errorMessage];
 };

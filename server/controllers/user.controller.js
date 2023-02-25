@@ -1,9 +1,10 @@
-const UserModel = require('../models/userModel');
+const UserModel = require('../models/user.model');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
+const userValidator = require('../validators/user.validator');
 
 const createToken = (id) => {
-  return jwt.sign({ _id: id }, process.env.SECRET_KEY, { expiresIn: '7d' });
+  return jwt.sign({ _id: id }, process.env.SECRET_KEY, { expiresIn: '1d' });
 };
 
 // Get all users
@@ -25,8 +26,15 @@ const getUser = async (req, res) => {
   res.status(200).json(user);
 };
 
+// Sign in user
 const signInUser = async (req, res) => {
-  const { email, password } = req.body;
+  const { error, value } = userValidator.signInValidator.validate(req.body);
+
+  if (error) {
+    // Return a 400 Bad Request response if validation fails
+    return res.status(400).json({ error: error.details[0].message });
+  }
+  const { email, password } = value;
 
   try {
     const user = await UserModel.signin(email, password);
@@ -41,8 +49,14 @@ const signInUser = async (req, res) => {
 
 // Create new user
 const signUpUser = async (req, res) => {
+  const { error, value } = userValidator.createUserValidator.validate(req.body);
+  if (error) {
+    // Return a 400 Bad Request response if validation fails
+    return res.status(400).json({ error: error.details[0].message });
+  }
+
   const { name, email, password, sex, age, height, weight, activityLevel } =
-    req.body;
+    value;
 
   try {
     const user = await UserModel.signup(
