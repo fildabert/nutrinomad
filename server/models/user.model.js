@@ -7,9 +7,17 @@ const Schema = mongoose.Schema;
 const activityLevelEnum = {
   SEDENTARY: 'sedentary',
   LIGHTLY_ACTIVE: 'lightly_active',
-  ACTIVE: 'active',
+  MODERATELY_ACTIVE: 'moderately_active',
   VERY_ACTIVE: 'very_active',
   INTENSELY_ACTIVE: 'intensely_active',
+};
+
+const activityLevels = {
+  sedentary: 1.2,
+  lightly_active: 1.375,
+  moderately_active: 1.55,
+  very_active: 1.725,
+  intensely_active: 1.9,
 };
 
 const sexEnum = {
@@ -54,9 +62,26 @@ const userSchema = new Schema(
       enum: Object.values(activityLevelEnum),
       required: true,
     },
+    bmr: {
+      type: Number,
+    },
   },
   { timestamps: true }
 );
+
+userSchema.methods.calculateBmr = function () {
+  const { sex, age, weight, height, activityLevel } = this;
+
+  const bmr =
+    sex === 'male'
+      ? 10 * weight + 6.25 * height - 5 * age + 5
+      : 10 * weight + 6.25 * height - 5 * age - 161;
+
+  const tdee = bmr * activityLevels[activityLevel];
+
+  this.bmr = Math.round(tdee);
+  return this.save();
+};
 
 userSchema.statics.signup = async function (
   name,

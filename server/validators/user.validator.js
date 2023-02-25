@@ -25,7 +25,7 @@ const createUserValidator = Joi.object({
     .valid(
       'sedentary',
       'lightly_active',
-      'active',
+      'moderately_active',
       'very_active',
       'intensely_active'
     )
