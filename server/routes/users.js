@@ -4,6 +4,7 @@ const {
   getUser,
   signInUser,
   signUpUser,
+  getUserBmr,
   deleteUser,
   updateUser,
 } = require('../controllers/user.controller');
@@ -17,6 +18,8 @@ router.get('/:id', getUser);
 router.post('/signIn', signInUser);
 
 router.post('/signUp', signUpUser);
+
+router.get('/bmr/:email', getUserBmr);
 
 router.delete('/:id', deleteUser);
 

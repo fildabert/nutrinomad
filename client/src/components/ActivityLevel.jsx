@@ -54,7 +54,7 @@ const ActivityLevel = ({ activityLevel, updateFields }) => {
           <ToggleButton
             key={button.value}
             value={button.value}
-            className="border-dashed border-gray-500 border-2"
+            className="border-dashed border-gray-500 border-2 focus:border-bright-green"
           >
             <Box className="flex flex-col items-center">
               <Typography variant="button">{button.label}</Typography>

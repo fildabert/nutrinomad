@@ -4,6 +4,12 @@ const validator = require('validator');
 
 const Schema = mongoose.Schema;
 
+const goalEnum = {
+  MAINTAIN: 'maintain',
+  LOSE: 'lose',
+  GAIN: 'gain',
+};
+
 const activityLevelEnum = {
   SEDENTARY: 'sedentary',
   LIGHTLY_ACTIVE: 'lightly_active',
@@ -62,6 +68,11 @@ const userSchema = new Schema(
       enum: Object.values(activityLevelEnum),
       required: true,
     },
+    goal: {
+      type: String,
+      enum: Object.values(goalEnum),
+      required: true,
+    },
     bmr: {
       type: Number,
     },
@@ -70,14 +81,24 @@ const userSchema = new Schema(
 );
 
 userSchema.methods.calculateBmr = function () {
-  const { sex, age, weight, height, activityLevel } = this;
+  const { sex, age, weight, height, activityLevel, goal } = this;
 
+  //Mifflin - St Jeor Formula
   const bmr =
     sex === 'male'
       ? 10 * weight + 6.25 * height - 5 * age + 5
       : 10 * weight + 6.25 * height - 5 * age - 161;
 
-  const tdee = bmr * activityLevels[activityLevel];
+  /* If lose weight, bmr - 500. If gain weight, bmr + 500 */
+  let adjustedBmr = bmr;
+  if (goal === goalEnum.LOSE) {
+    adjustedBmr -= 500;
+  } else if (goal === goalEnum.GAIN) {
+    adjustedBmr += 500;
+  }
+
+  //Total Daily Energy Expenditure (TDEE)
+  const tdee = adjustedBmr * activityLevels[activityLevel];
 
   this.bmr = Math.round(tdee);
   return this.save();
@@ -91,25 +112,9 @@ userSchema.statics.signup = async function (
   age,
   height,
   weight,
+  goal,
   activityLevel
 ) {
-  if (
-    !name ||
-    !email ||
-    !password ||
-    !sex ||
-    !age ||
-    !height ||
-    !weight ||
-    !activityLevel
-  ) {
-    throw Error('All fields must be filled.');
-  }
-
-  if (!validator.isEmail(email)) {
-    throw Error('Invalid Email.');
-  }
-
   if (!validator.isStrongPassword(password)) {
     throw Error(
       'Password must contain a combination of uppercase letters, lowercase letters, numbers, and symbols.'
@@ -133,6 +138,7 @@ userSchema.statics.signup = async function (
     age,
     height,
     weight,
+    goal,
     activityLevel,
   });
 

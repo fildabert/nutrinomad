@@ -55,8 +55,17 @@ const signUpUser = async (req, res) => {
     return res.status(400).json({ error: error.details[0].message });
   }
 
-  const { name, email, password, sex, age, height, weight, activityLevel } =
-    value;
+  const {
+    name,
+    email,
+    password,
+    sex,
+    age,
+    height,
+    weight,
+    goal,
+    activityLevel,
+  } = value;
 
   try {
     const user = await UserModel.signup(
@@ -67,6 +76,7 @@ const signUpUser = async (req, res) => {
       age,
       height,
       weight,
+      goal,
       activityLevel
     );
 
@@ -78,6 +88,16 @@ const signUpUser = async (req, res) => {
   } catch (error) {
     return res.status(400).json({ error: error.message });
   }
+};
+
+// Get user bmr
+const getUserBmr = async (req, res) => {
+  const { email } = req.params;
+  const user = await UserModel.findOne({ email: email });
+  if (!user) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+  res.status(200).json(user.bmr);
 };
 
 // Delete user by id
@@ -111,6 +131,7 @@ module.exports = {
   getUser,
   signInUser,
   signUpUser,
+  getUserBmr,
   deleteUser,
   updateUser,
 };

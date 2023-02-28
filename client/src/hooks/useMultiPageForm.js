@@ -23,6 +23,7 @@ export const useMultiPageForm = (pages) => {
     pages,
     isFirstPage: currentPage === 0,
     isLastPage: currentPage === pages.length - 1,
+    isSecondLastPage: currentPage === pages.length - 2,
     nextPage,
     prevPage,
   };

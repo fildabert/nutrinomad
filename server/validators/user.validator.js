@@ -21,6 +21,10 @@ const createUserValidator = Joi.object({
     'number.min': 'Weight must be greater than or equal to {#limit}',
     'number.max': 'Weight must be less than or equal to {#limit}',
   }),
+  goal: Joi.string()
+    .valid('maintain', 'lose', 'gain')
+    .required()
+    .messages({ 'any.only': 'Please select a goal' }),
   activityLevel: Joi.string()
     .valid(
       'sedentary',
@@ -33,6 +37,7 @@ const createUserValidator = Joi.object({
     .messages({
       'any.only': 'Please select an activity level',
     }),
+  bmr: Joi.number().allow(0, '').optional(),
 });
 
 const signInValidator = Joi.object({

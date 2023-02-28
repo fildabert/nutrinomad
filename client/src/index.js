@@ -7,6 +7,8 @@ import LandingPage from './pages/LandingPage';
 import SignIn from './pages/SignIn';
 import { AuthContextProvider } from './context/AuthContext';
 import Form from './pages/Form';
+import SignUpSuccess from './pages/SignUpSuccess';
+import Home from './pages/Home';
 
 const router = createBrowserRouter([
   {
@@ -20,6 +22,14 @@ const router = createBrowserRouter([
   {
     path: '/sign-in',
     element: <SignIn />,
+  },
+  {
+    path: '/sign-up/success',
+    element: <SignUpSuccess />,
+  },
+  {
+    path: '/home',
+    element: <Home />,
   },
 ]);
 

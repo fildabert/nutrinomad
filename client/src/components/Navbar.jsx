@@ -22,7 +22,7 @@ const Navbar = () => {
       {user && (
         <Box className="flex">
           <Typography className="pr-8">{user.email}</Typography>
-          <Link onClick={handleSignOut} className="text-lg">
+          <Link onClick={handleSignOut} className="text-lg" href="/">
             Sign Out
           </Link>
         </Box>

@@ -5,7 +5,7 @@ import { ACTIONS } from '../context/AuthContext';
 
 export const useSignUp = () => {
   const [errorMessage, setErrorMessage] = useState('');
-  const [isError, setIsError] = useState(null);
+  const [isError, setIsError] = useState(false);
   const { dispatch } = useAuthContext();
 
   const signUp = async (
@@ -16,10 +16,10 @@ export const useSignUp = () => {
     age,
     height,
     weight,
+    goal,
     activityLevel
   ) => {
     setErrorMessage(null);
-    setIsError(false);
 
     try {
       const response = await axios.post('/api/users/signUp', {
@@ -30,6 +30,7 @@ export const useSignUp = () => {
         age,
         height,
         weight,
+        goal,
         activityLevel,
       });
       const data = await response.data;
@@ -41,6 +42,8 @@ export const useSignUp = () => {
         // update Auth Context
         dispatch({ type: ACTIONS.SIGNIN, payload: data });
         setIsError(false);
+
+        return data;
       }
     } catch (err) {
       setIsError(true);
