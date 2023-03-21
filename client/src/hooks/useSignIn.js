@@ -8,11 +8,11 @@ export const useSignIn = () => {
   const [isError, setIsError] = useState(null);
   const { dispatch } = useAuthContext();
 
-  const signIn = async (email, password) => {
+  const signIn = async (email, password, callback) => {
     setIsError(null);
 
     try {
-      const response = await axios.post('/api/users/signIn', {
+      const response = await axios.post('/api/user/signIn', {
         email,
         password,
       });
@@ -26,6 +26,9 @@ export const useSignIn = () => {
         // update Auth Context
         dispatch({ type: ACTIONS.SIGNIN, payload: data });
         setIsError(false);
+        if (callback) {
+          callback(response);
+        }
       }
     } catch (err) {
       setIsError(true);

@@ -8,7 +8,9 @@ import SignIn from './pages/SignIn';
 import { AuthContextProvider } from './context/AuthContext';
 import Form from './pages/Form';
 import SignUpSuccess from './pages/SignUpSuccess';
-import Home from './pages/Home';
+import FoodDiary from './pages/FoodDiary';
+import FoodSearch from './pages/FoodSearch';
+import { MealContextProvider } from './context/MealContext';
 
 const router = createBrowserRouter([
   {
@@ -28,8 +30,12 @@ const router = createBrowserRouter([
     element: <SignUpSuccess />,
   },
   {
-    path: '/home',
-    element: <Home />,
+    path: '/food/diary',
+    element: <FoodDiary />,
+  },
+  {
+    path: '/food/search',
+    element: <FoodSearch />,
   },
 ]);
 
@@ -56,7 +62,9 @@ root.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
       <AuthContextProvider>
-        <RouterProvider router={router} />
+        <MealContextProvider>
+          <RouterProvider router={router} />
+        </MealContextProvider>
       </AuthContextProvider>
     </ThemeProvider>
   </React.StrictMode>

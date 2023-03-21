@@ -3,6 +3,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
 const userRoutes = require('./routes/users');
+const foodDiaryRoutes = require('./routes/foodDiary');
+const foodRoutes = require('./routes/food');
+const mealRoutes = require('./routes/meal');
 
 //middleware
 app.use(express.json());
@@ -11,7 +14,10 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/api/users', userRoutes);
+app.use('/api/user', userRoutes);
+app.use('/api/diary', foodDiaryRoutes);
+app.use('/api/food', foodRoutes);
+app.use('/api/meal', mealRoutes);
 
 mongoose.set('strictQuery', false);
 mongoose
@@ -22,18 +28,3 @@ mongoose
     });
   })
   .catch((error) => console.log(error));
-
-// const API_URL = 'https://api.nal.usda.gov/fdc/v1/foods/search';
-
-// axios
-//   .get(
-//     `${API_URL}?query=apple&pageSize=2&api_key=${API_KEY}&dataType=${[
-//       'Survey (FNDDS)',
-//     ]}`
-//   )
-//   .then((response) => {
-//     console.log(response.data);
-//   })
-//   .catch((error) => {
-//     console.error(error);
-//   });

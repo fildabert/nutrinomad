@@ -20,7 +20,7 @@ const INITIAL_DATA = {
   age: 12,
   height: 0,
   weight: 0,
-  goal: '',
+  goal: 'maintain',
   activityLevel: 'sedentary',
 };
 
@@ -54,24 +54,28 @@ const Form = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isSecondLastPage) return nextPage();
-    //call signup()
-    const user = await signUp(
-      formData.name,
-      formData.email,
-      formData.password,
-      formData.sex,
-      formData.age,
-      formData.height,
-      formData.weight,
-      formData.goal,
-      formData.activityLevel
-    );
 
-    if (user) {
-      const response = await axios.get(`/api/users/bmr/${user?.email}`);
-      const userBmr = await response.data;
-      setBmr(userBmr);
-      nextPage();
+    try {
+      const user = await signUp(
+        formData.name,
+        formData.email,
+        formData.password,
+        formData.sex,
+        formData.age,
+        formData.height,
+        formData.weight,
+        formData.goal,
+        formData.activityLevel
+      );
+      if (user) {
+        const response = await axios.get(`/api/user/bmr/${user?.email}`);
+        const userBmr = await response.data;
+        setBmr(userBmr);
+
+        nextPage();
+      }
+    } catch (error) {
+      console.log(error.message);
     }
   };
 
@@ -104,7 +108,7 @@ const Form = () => {
             className={`my-4 text-white ${
               isFirstPage || isLastPage ? 'mx-auto w-full' : ''
             }`}
-            href={isLastPage ? '/home' : ''}
+            href={isLastPage ? '/food/diary' : ''}
           >
             {isSecondLastPage
               ? 'Sign Up'

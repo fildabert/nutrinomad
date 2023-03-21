@@ -22,7 +22,7 @@ export const useSignUp = () => {
     setErrorMessage(null);
 
     try {
-      const response = await axios.post('/api/users/signUp', {
+      const response = await axios.post('/api/user/signUp', {
         name,
         email,
         password,
@@ -35,7 +35,7 @@ export const useSignUp = () => {
       });
       const data = await response.data;
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         // save user to local storage
         localStorage.setItem('user', JSON.stringify(data));
 

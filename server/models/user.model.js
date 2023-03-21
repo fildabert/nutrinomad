@@ -1,6 +1,4 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
-const validator = require('validator');
 
 const Schema = mongoose.Schema;
 
@@ -76,6 +74,10 @@ const userSchema = new Schema(
     bmr: {
       type: Number,
     },
+    avatar: {
+      type: String,
+    },
+    foodDiary: { type: Schema.Types.ObjectId, ref: 'FoodDiary' },
   },
   { timestamps: true }
 );
@@ -102,67 +104,6 @@ userSchema.methods.calculateBmr = function () {
 
   this.bmr = Math.round(tdee);
   return this.save();
-};
-
-userSchema.statics.signup = async function (
-  name,
-  email,
-  password,
-  sex,
-  age,
-  height,
-  weight,
-  goal,
-  activityLevel
-) {
-  if (!validator.isStrongPassword(password)) {
-    throw Error(
-      'Password must contain a combination of uppercase letters, lowercase letters, numbers, and symbols.'
-    );
-  }
-
-  const emailExists = await this.findOne({ email });
-
-  if (emailExists) {
-    throw Error('Someone already signed up with this email.');
-  }
-
-  const salt = await bcrypt.genSalt(10);
-  const hash = await bcrypt.hash(password, salt);
-
-  const user = await this.create({
-    name,
-    email,
-    password: hash,
-    sex,
-    age,
-    height,
-    weight,
-    goal,
-    activityLevel,
-  });
-
-  return user;
-};
-
-userSchema.statics.signin = async function (email, password) {
-  if (!email || !password) {
-    throw Error('All fields must be filled.');
-  }
-
-  const user = await this.findOne({ email });
-
-  if (!user) {
-    throw Error('Incorrect email.');
-  }
-
-  const passwordMatch = await bcrypt.compare(password, user.password);
-
-  if (!passwordMatch) {
-    throw Error('Incorrect password.');
-  }
-
-  return user;
 };
 
 module.exports = mongoose.model('User', userSchema);

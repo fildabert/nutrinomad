@@ -38,6 +38,7 @@ const createUserValidator = Joi.object({
       'any.only': 'Please select an activity level',
     }),
   bmr: Joi.number().allow(0, '').optional(),
+  avatar: Joi.string().uri().trim().allow(null, '').optional(),
 });
 
 const signInValidator = Joi.object({

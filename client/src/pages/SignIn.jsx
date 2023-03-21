@@ -17,12 +17,15 @@ import { useState } from 'react';
 import Navbar from '../components/Navbar';
 import PaperForm from '../components/PaperForm';
 import { useSignIn } from '../hooks/useSignIn';
+import { useNavigate } from 'react-router-dom';
 
 const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [signIn, isError, errorMessage] = useSignIn();
+
+  let navigate = useNavigate();
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -32,7 +35,9 @@ const SignIn = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await signIn(email, password);
+    await signIn(email, password, (response) => {
+      navigate('/food/diary');
+    });
   };
 
   return (

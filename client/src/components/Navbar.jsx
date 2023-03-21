@@ -1,17 +1,12 @@
-import { Box, Link, Typography } from '@mui/material';
+import { Box, Link } from '@mui/material';
 import { ReactComponent as NutriNomadLogo } from '../assets/images/nutrinomad.svg';
 import { useAuthContext } from '../hooks/useAuthContext';
-import { useSignOut } from '../hooks/useSignOut';
 import { useLocation } from 'react-router-dom';
+import AvatarPopover from './AvatarPopover';
 
 const Navbar = () => {
   const { pathname } = useLocation();
-  const { signOut } = useSignOut();
   const { user } = useAuthContext();
-
-  const handleSignOut = () => {
-    signOut();
-  };
 
   return (
     <Box className="p-2 pt-4 flex justify-between flex-wrap">
@@ -21,10 +16,11 @@ const Navbar = () => {
       {/* TODO: Handle state when signed in or not */}
       {user && (
         <Box className="flex">
-          <Typography className="pr-8">{user.email}</Typography>
+          <AvatarPopover />
+          {/* <Avatar>{user.name.charAt(0)}</Avatar>
           <Link onClick={handleSignOut} className="text-lg" href="/">
             Sign Out
-          </Link>
+          </Link> */}
         </Box>
       )}
 
