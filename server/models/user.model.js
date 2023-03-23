@@ -74,6 +74,15 @@ const userSchema = new Schema(
     bmr: {
       type: Number,
     },
+    proteinIntake: {
+      type: Number,
+    },
+    carbsIntake: {
+      type: Number,
+    },
+    fatIntake: {
+      type: Number,
+    },
     avatar: {
       type: String,
     },
@@ -82,7 +91,7 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 
-userSchema.methods.calculateBmr = function () {
+userSchema.methods.calculateBmrAndMacroIntake = function () {
   const { sex, age, weight, height, activityLevel, goal } = this;
 
   //Mifflin - St Jeor Formula
@@ -101,6 +110,32 @@ userSchema.methods.calculateBmr = function () {
 
   //Total Daily Energy Expenditure (TDEE)
   const tdee = adjustedBmr * activityLevels[activityLevel];
+
+  //Macronutrient daily intake calculation based on the user's goals
+  let proteinIntake, carbsIntake, fatIntake;
+  switch (goal) {
+    case goalEnum.MAINTAIN:
+      proteinIntake = Math.round(0.8 * weight); // 0.8 g of protein per kg of body weight
+      carbsIntake = Math.round((0.5 * tdee) / 4); // 50% of calories from carbs
+      fatIntake = Math.round((0.3 * tdee) / 9); // 30% of calories from fat
+      break;
+    case goalEnum.LOSE:
+      proteinIntake = Math.round(2 * weight); // 2 g of protein per kg of body weight
+      carbsIntake = Math.round((0.4 * tdee) / 4); // 40% of calories from carbs
+      fatIntake = Math.round((0.3 * tdee) / 9); // 30% of calories from fat
+      break;
+    case goalEnum.GAIN:
+      proteinIntake = Math.round(1.5 * weight); // 1.5 g of protein per kg of body weight
+      carbsIntake = Math.round((0.6 * tdee) / 4); // 60% of calories from carbs
+      fatIntake = Math.round((0.25 * tdee) / 9); // 25% of calories from fat
+      break;
+    default:
+      break;
+  }
+
+  this.proteinIntake = proteinIntake;
+  this.carbsIntake = carbsIntake;
+  this.fatIntake = fatIntake;
 
   this.bmr = Math.round(tdee);
   return this.save();

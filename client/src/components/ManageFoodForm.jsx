@@ -6,6 +6,7 @@ import {
   DialogContent,
   DialogTitle,
   FormControl,
+  Grid,
   InputLabel,
   MenuItem,
   Select,
@@ -19,6 +20,7 @@ import axios from 'axios';
 import { useAuthContext } from '../hooks/useAuthContext';
 import useMealContext from '../hooks/useMealContext';
 import { MEAL_ACTIONS } from '../context/MealContext';
+import NutrientPieChart from './NutrientPieChart';
 
 const ManageFoodForm = ({ foodData, meal, open, onClose, date }) => {
   const [quantity, setQuantity] = useState(foodData.quantity);
@@ -76,71 +78,94 @@ const ManageFoodForm = ({ foodData, meal, open, onClose, date }) => {
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>{foodData.name}</DialogTitle>
       <DialogContent>
-        <Box>
-          <Typography sx={{ color: 'GrayText' }}>
-            {foodData.foodCategory}
-          </Typography>
-          <Box mt={2}>
-            <TextField
-              sx={{ width: 1 / 4 }}
-              label="Quantity"
-              variant="standard"
-              type="number"
-              value={quantity}
-              inputProps={{ min: 1 }}
-              onChange={handleQuantityChange}
-            />
-          </Box>
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={8}>
+            <Box>
+              <Typography sx={{ color: 'GrayText' }}>
+                {foodData.foodCategory}
+              </Typography>
+              <Box mt={2}>
+                <TextField
+                  sx={{ width: 1 / 4 }}
+                  label="Quantity"
+                  variant="standard"
+                  type="number"
+                  value={quantity}
+                  inputProps={{ min: 1 }}
+                  onChange={handleQuantityChange}
+                />
+              </Box>
 
-          <Box mt={2}>
-            <FormControl sx={{ width: 3 / 4 }}>
-              <InputLabel>Meal Type</InputLabel>
-              <Select
-                label="Meal Type"
-                value={mealType}
-                onChange={handleMealTypeChange}
-              >
-                <MenuItem value="breakfast">Breakfast</MenuItem>
-                <MenuItem value="lunch">Lunch</MenuItem>
-                <MenuItem value="dinner">Dinner</MenuItem>
-                <MenuItem value="snack">Snack</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
+              <Box mt={2}>
+                <FormControl sx={{ width: 3 / 4 }}>
+                  <InputLabel>Meal Type</InputLabel>
+                  <Select
+                    label="Meal Type"
+                    value={mealType}
+                    onChange={handleMealTypeChange}
+                  >
+                    <MenuItem value="breakfast">Breakfast</MenuItem>
+                    <MenuItem value="lunch">Lunch</MenuItem>
+                    <MenuItem value="dinner">Dinner</MenuItem>
+                    <MenuItem value="snack">Snack</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
 
-          <Box mt={2}>
-            <Typography>
-              <Typography component="span" style={{ fontWeight: 'bold' }}>
-                Serving size:{' '}
-              </Typography>
-              {foodData.servingSize}
-            </Typography>
-            <Typography>
-              <Typography component="span" style={{ fontWeight: 'bold' }}>
-                Protein:{' '}
-              </Typography>
-              {foodData.protein} g
-            </Typography>
-            <Typography>
-              <Typography component="span" style={{ fontWeight: 'bold' }}>
-                Fat:{' '}
-              </Typography>
-              {foodData.fat} g
-            </Typography>
-            <Typography>
-              <Typography component="span" sx={{ fontWeight: 'bold' }}>
-                Carbs:{' '}
-              </Typography>
-              {foodData.carbs} g
-            </Typography>
-            <Typography>
-              <Typography component="span" sx={{ fontWeight: 'bold' }}>
-                Calories:{' '}
-              </Typography>
-              {foodData.calories} kcal
-            </Typography>
-          </Box>
-        </Box>
+              <Box mt={2}>
+                <Typography>
+                  <Typography component="span" sx={{ fontWeight: 'bold' }}>
+                    Serving size:{' '}
+                  </Typography>
+                  {foodData.servingSize}
+                </Typography>
+                <Typography>
+                  <Typography
+                    component="span"
+                    sx={{ fontWeight: 'bold', color: '#CC3366' }}
+                  >
+                    Protein:{' '}
+                  </Typography>
+                  {foodData.protein} g
+                </Typography>
+                <Typography>
+                  <Typography
+                    component="span"
+                    sx={{ fontWeight: 'bold', color: '#FFE07D' }}
+                  >
+                    Fat:{' '}
+                  </Typography>
+                  {foodData.fat} g
+                </Typography>
+                <Typography>
+                  <Typography
+                    component="span"
+                    sx={{ fontWeight: 'bold', color: '#99CC66' }}
+                  >
+                    Carbs:{' '}
+                  </Typography>
+                  {foodData.carbs} g
+                </Typography>
+                <Typography>
+                  <Typography component="span" sx={{ fontWeight: 'bold' }}>
+                    Calories:{' '}
+                  </Typography>
+                  {foodData.calories} kcal
+                </Typography>
+              </Box>
+            </Box>
+          </Grid>
+
+          <Grid item xs={12} md={4}>
+            <Box>
+              <NutrientPieChart
+                protein={foodData.protein}
+                fat={foodData.protein}
+                carbs={foodData.carbs}
+              />
+            </Box>
+          </Grid>
+        </Grid>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>

@@ -150,7 +150,7 @@ const updateUserById = async (id, userData) => {
       { ...userData },
       { new: true }
     );
-    await updatedUser.calculateBmr();
+    await updatedUser.calculateBmrAndMacroIntake();
     return updatedUser;
   } catch (error) {
     return { error: error.message };

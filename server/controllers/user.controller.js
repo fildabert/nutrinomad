@@ -41,7 +41,7 @@ const signInUser = async (req, res) => {
 const signUpUser = async (req, res) => {
   try {
     const user = await userService.signUp(req.body);
-    await user.calculateBmr();
+    await user.calculateBmrAndMacroIntake();
 
     const token = createToken(user._id);
 
@@ -54,13 +54,18 @@ const signUpUser = async (req, res) => {
 };
 
 // Get user bmr
-const getUserBmr = async (req, res) => {
+const getUserBmrAndMacroByEmail = async (req, res) => {
   const { email } = req.params;
   const user = await userService.getUserByEmail(email);
   if (!user) {
     return res.status(404).json({ error: 'User not found' });
   }
-  res.status(200).json(user.bmr);
+  res.status(200).json({
+    bmr: user.bmr,
+    proteinIntake: user.proteinIntake,
+    fatIntake: user.fatIntake,
+    carbsIntake: user.carbsIntake,
+  });
 };
 
 // Delete user by id
@@ -90,7 +95,7 @@ module.exports = {
   getUser,
   signInUser,
   signUpUser,
-  getUserBmr,
+  getUserBmrAndMacroByEmail,
   deleteUser,
   updateUser,
 };

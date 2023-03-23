@@ -15,6 +15,8 @@ import useMealContext from '../hooks/useMealContext';
 import axios from 'axios';
 import { useAuthContext } from '../hooks/useAuthContext';
 import { MEAL_ACTIONS } from '../context/MealContext';
+import CalorieCounter from '../components/CalorieCounter';
+import NutrientRadialBarChart from '../components/NutrientRadialBarChart';
 
 const FoodDiary = () => {
   const navigate = useNavigate();
@@ -22,6 +24,10 @@ const FoodDiary = () => {
   const [selectedFood, setSelectedFood] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedMeal, setSelectedMeal] = useState(null);
+  const [bmr, setBmr] = useState(0);
+  const [proteinIntake, setProteinIntake] = useState(0);
+  const [fatIntake, setFatIntake] = useState(0);
+  const [carbsIntake, setCarbsIntake] = useState(0);
   const { user } = useAuthContext();
   const [isLoading, setIsLoading] = useState(true);
   const { meals, dispatch: mealDispatch } = useMealContext();
@@ -41,10 +47,37 @@ const FoodDiary = () => {
       mealDispatch({ type: MEAL_ACTIONS.SET_MEALS, payload: data });
       setIsLoading(false);
     };
+    const fetchBmr = async () => {
+      if (!user) {
+        return;
+      }
+      const response = await axios.get(`/api/user/bmr/${user.email}`);
+      const data = await response.data;
+      const userBmr = data.bmr;
+      const protein = data.proteinIntake;
+      const fat = data.fatIntake;
+      const carbs = data.carbsIntake;
+      setBmr(userBmr);
+      setProteinIntake(protein);
+      setFatIntake(fat);
+      setCarbsIntake(carbs);
+    };
 
-    fetchMeals(dateString);
+    //fetch data in parallel
+    Promise.all([fetchMeals(dateString), fetchBmr()]);
   }, [currentDate, user]);
 
+  const calculateTotalMacro = (macro) => {
+    let totalMacro = 0;
+    if (meals) {
+      meals.forEach((meal) => {
+        meal.foods.forEach((food) => {
+          totalMacro += food[macro];
+        });
+      });
+    }
+    return Math.round(totalMacro);
+  };
   const renderMealsByType = (mealType) => {
     if (!meals) {
       return (
@@ -116,6 +149,31 @@ const FoodDiary = () => {
         <Navbar />
       </Container>
       <DiaryDate currentDate={currentDate} setCurrentDate={setCurrentDate} />
+      <CalorieCounter
+        bmr={bmr}
+        totalCalories={calculateTotalMacro('calories')}
+      />
+
+      <Box className="flex justify-center">
+        <NutrientRadialBarChart
+          name="Carbs"
+          value={calculateTotalMacro('carbs')}
+          max={carbsIntake}
+          fill="#99CC66"
+        />
+        <NutrientRadialBarChart
+          name="Fat"
+          value={calculateTotalMacro('fat')}
+          max={fatIntake}
+          fill="#FFE07D"
+        />
+        <NutrientRadialBarChart
+          name="Protein"
+          value={calculateTotalMacro('protein')}
+          max={proteinIntake}
+          fill="#CC3366"
+        />
+      </Box>
       <Box display="flex" justifyContent="center" mt={4}>
         <Button variant="contained" onClick={handleAddFoodButton}>
           Add Food

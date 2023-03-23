@@ -4,7 +4,7 @@ const {
   getUser,
   signInUser,
   signUpUser,
-  getUserBmr,
+  getUserBmrAndMacroByEmail,
   deleteUser,
   updateUser,
 } = require('../controllers/user.controller');
@@ -19,7 +19,7 @@ router.post('/signIn', signInUser);
 
 router.post('/signUp', signUpUser);
 
-router.get('/bmr/:email', getUserBmr);
+router.get('/bmr/:email', getUserBmrAndMacroByEmail);
 
 router.delete('/:id', deleteUser);
 

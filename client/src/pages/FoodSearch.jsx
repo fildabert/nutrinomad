@@ -80,7 +80,7 @@ const FoodSearch = () => {
     } else {
       nutrients = nutrients.toFixed(2);
     }
-
+    console.log(nutrients);
     return nutrients;
   };
 
