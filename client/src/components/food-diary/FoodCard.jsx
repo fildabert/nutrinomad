@@ -6,9 +6,9 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import CarbsIcon from '../assets/icons/carbs.png';
-import FatIcon from '../assets/icons/fat.png';
-import ProteinIcon from '../assets/icons/protein.png';
+import CarbsIcon from '../../assets/icons/carbs.png';
+import FatIcon from '../../assets/icons/fat.png';
+import ProteinIcon from '../../assets/icons/protein.png';
 
 const FoodCard = ({ foodData, onClick, isLoading }) => {
   const {

@@ -17,10 +17,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import React, { useState } from 'react';
 import axios from 'axios';
 
-import { useAuthContext } from '../hooks/useAuthContext';
-import useMealContext from '../hooks/useMealContext';
-import { MEAL_ACTIONS } from '../context/MealContext';
-import NutrientPieChart from './NutrientPieChart';
+import { useAuthContext } from '../../hooks/useAuthContext';
+import useMealContext from '../../hooks/useMealContext';
+import { MEAL_ACTIONS } from '../../context/MealContext';
+import NutrientPieChart from '../chart/NutrientPieChart';
 
 const ManageFoodForm = ({ foodData, meal, open, onClose, date }) => {
   const [quantity, setQuantity] = useState(foodData.quantity);

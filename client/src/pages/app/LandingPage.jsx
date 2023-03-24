@@ -1,7 +1,7 @@
-import illustration1 from '../assets/images/illustration1.png';
+import illustration1 from '../../assets/images/illustration1.png';
 import Button from '@mui/material/Button';
 import { Box, Container, Typography } from '@mui/material';
-import Navbar from '../components/Navbar';
+import Navbar from '../../components/layout/Navbar';
 
 const LandingPage = () => {
   return (

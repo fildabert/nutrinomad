@@ -12,7 +12,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useState } from 'react';
 
-const SignUp = ({ name, email, password, updateFields }) => {
+const UserCredentials = ({ name, email, password, updateFields }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -76,4 +76,4 @@ const SignUp = ({ name, email, password, updateFields }) => {
   );
 };
 
-export default SignUp;
+export default UserCredentials;

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
-import useFoodSearch from '../hooks/useFoodSearch';
+import useFoodSearch from '../../hooks/useFoodSearch';
 import {
   Box,
   Container,
@@ -9,9 +9,9 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import Navbar from '../components/Navbar';
-import FoodCard from '../components/FoodCard';
-import DiaryEntryForm from '../components/DiaryEntryForm';
+import Navbar from '../../components/layout/Navbar';
+import FoodCard from '../../components/food-diary/FoodCard';
+import DiaryEntryForm from '../../components/form/DiaryEntryForm';
 import { useLocation } from 'react-router-dom';
 
 const NUTRIENT_ID = {

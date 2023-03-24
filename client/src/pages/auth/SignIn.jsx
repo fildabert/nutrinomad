@@ -14,9 +14,9 @@ import {
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useState } from 'react';
-import Navbar from '../components/Navbar';
-import PaperForm from '../components/PaperForm';
-import { useSignIn } from '../hooks/useSignIn';
+import Navbar from '../../components/layout/Navbar';
+import PaperForm from '../../components/layout/PaperForm';
+import { useSignIn } from '../../hooks/useSignIn';
 import { useNavigate } from 'react-router-dom';
 
 const SignIn = () => {

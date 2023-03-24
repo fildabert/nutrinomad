@@ -3,14 +3,15 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material';
-import LandingPage from './pages/LandingPage';
-import SignIn from './pages/SignIn';
+import LandingPage from './pages/app/LandingPage';
+import SignIn from './pages/auth/SignIn';
 import { AuthContextProvider } from './context/AuthContext';
-import Form from './pages/Form';
-import SignUpSuccess from './pages/SignUpSuccess';
-import FoodDiary from './pages/FoodDiary';
-import FoodSearch from './pages/FoodSearch';
+import SignUpSuccess from './components/auth/SignUpSuccess';
+
+import FoodDiary from './pages/app/FoodDiary';
+import FoodSearch from './pages/app/FoodSearch';
 import { MealContextProvider } from './context/MealContext';
+import SignUp from './pages/auth/SignUp';
 
 const router = createBrowserRouter([
   {
@@ -19,7 +20,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/sign-up',
-    element: <Form />,
+    element: <SignUp />,
   },
   {
     path: '/sign-in',

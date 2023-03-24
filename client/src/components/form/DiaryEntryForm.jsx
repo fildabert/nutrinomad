@@ -14,7 +14,7 @@ import {
   Typography,
 } from '@mui/material';
 import axios from 'axios';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../../context/AuthContext';
 
 const NUTRIENT_ID = {
   PROTEIN: 1003,

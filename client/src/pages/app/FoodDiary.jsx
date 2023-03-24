@@ -6,17 +6,17 @@ import {
   Typography,
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import DiaryDate from '../components/DiaryDate';
-import Navbar from '../components/Navbar';
-import FoodCard from '../components/FoodCard';
+import DiaryDate from '../../components/food-diary/DiaryDate';
+import Navbar from '../../components/layout/Navbar';
+import FoodCard from '../../components/food-diary/FoodCard';
 import { useNavigate } from 'react-router-dom';
-import ManageFoodForm from '../components/ManageFoodForm';
-import useMealContext from '../hooks/useMealContext';
+import ManageFoodForm from '../../components/form/ManageFoodForm';
+import useMealContext from '../../hooks/useMealContext';
 import axios from 'axios';
-import { useAuthContext } from '../hooks/useAuthContext';
-import { MEAL_ACTIONS } from '../context/MealContext';
-import CalorieCounter from '../components/CalorieCounter';
-import NutrientRadialBarChart from '../components/NutrientRadialBarChart';
+import { useAuthContext } from '../../hooks/useAuthContext';
+import { MEAL_ACTIONS } from '../../context/MealContext';
+import CalorieCounter from '../../components/food-diary/CalorieCounter';
+import NutrientRadialBarChart from '../../components/chart/NutrientRadialBarChart';
 
 const FoodDiary = () => {
   const navigate = useNavigate();
@@ -28,41 +28,45 @@ const FoodDiary = () => {
   const [proteinIntake, setProteinIntake] = useState(0);
   const [fatIntake, setFatIntake] = useState(0);
   const [carbsIntake, setCarbsIntake] = useState(0);
-  const { user } = useAuthContext();
   const [isLoading, setIsLoading] = useState(true);
+
+  // Get necessary data from context
+  const { user } = useAuthContext();
   const { meals, dispatch: mealDispatch } = useMealContext();
+
+  // Get the date string from the current date state
   const dateString = currentDate.toISOString().substring(0, 10);
 
-  useEffect(() => {
-    const fetchMeals = async (dateString) => {
-      if (!user) {
-        return;
-      }
-      setIsLoading(true);
-      const response = await axios.get(
-        `/api/diary/${user._id}?date=${dateString}`
-      );
-      const data = response.data;
-      console.log(data);
-      mealDispatch({ type: MEAL_ACTIONS.SET_MEALS, payload: data });
-      setIsLoading(false);
-    };
-    const fetchBmr = async () => {
-      if (!user) {
-        return;
-      }
-      const response = await axios.get(`/api/user/bmr/${user.email}`);
-      const data = await response.data;
-      const userBmr = data.bmr;
-      const protein = data.proteinIntake;
-      const fat = data.fatIntake;
-      const carbs = data.carbsIntake;
-      setBmr(userBmr);
-      setProteinIntake(protein);
-      setFatIntake(fat);
-      setCarbsIntake(carbs);
-    };
+  const fetchMeals = async (dateString) => {
+    if (!user) {
+      return;
+    }
+    setIsLoading(true);
+    const response = await axios.get(
+      `/api/diary/${user._id}?date=${dateString}`
+    );
+    const data = response.data;
+    console.log(data);
+    mealDispatch({ type: MEAL_ACTIONS.SET_MEALS, payload: data });
+    setIsLoading(false);
+  };
+  const fetchBmr = async () => {
+    if (!user) {
+      return;
+    }
+    const response = await axios.get(`/api/user/bmr/${user.email}`);
+    const data = await response.data;
+    const userBmr = data.bmr;
+    const protein = data.proteinIntake;
+    const fat = data.fatIntake;
+    const carbs = data.carbsIntake;
+    setBmr(userBmr);
+    setProteinIntake(protein);
+    setFatIntake(fat);
+    setCarbsIntake(carbs);
+  };
 
+  useEffect(() => {
     //fetch data in parallel
     Promise.all([fetchMeals(dateString), fetchBmr()]);
   }, [currentDate, user]);
@@ -174,7 +178,7 @@ const FoodDiary = () => {
           fill="#CC3366"
         />
       </Box>
-      <Box display="flex" justifyContent="center" mt={4}>
+      <Box display="flex" justifyContent="center">
         <Button variant="contained" onClick={handleAddFoodButton}>
           Add Food
         </Button>

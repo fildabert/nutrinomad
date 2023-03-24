@@ -1,6 +1,6 @@
 import { Box, Link } from '@mui/material';
-import { ReactComponent as NutriNomadLogo } from '../assets/images/nutrinomad.svg';
-import { useAuthContext } from '../hooks/useAuthContext';
+import { ReactComponent as NutriNomadLogo } from '../../assets/images/nutrinomad.svg';
+import { useAuthContext } from '../../hooks/useAuthContext';
 import { useLocation } from 'react-router-dom';
 import AvatarPopover from './AvatarPopover';
 

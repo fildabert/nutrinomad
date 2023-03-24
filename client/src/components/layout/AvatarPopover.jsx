@@ -11,11 +11,9 @@ import {
   IconButton,
   Popover,
 } from '@mui/material';
-import { useAuthContext } from '../hooks/useAuthContext';
-import { useSignOut } from '../hooks/useSignOut';
+import { useAuthContext } from '../../hooks/useAuthContext';
+import { useSignOut } from '../../hooks/useSignOut';
 import { useNavigate } from 'react-router-dom';
-
-// ----------------------------------------------------------------------
 
 const MENU_OPTIONS = [
   {
@@ -23,8 +21,6 @@ const MENU_OPTIONS = [
     icon: 'eva:person-fill',
   },
 ];
-
-// ----------------------------------------------------------------------
 
 export default function AccountPopover() {
   const [open, setOpen] = useState(null);
