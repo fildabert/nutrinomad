@@ -13,14 +13,9 @@ const Navbar = () => {
       <Link href="/">
         <NutriNomadLogo className="w-40" />
       </Link>
-      {/* TODO: Handle state when signed in or not */}
       {user && (
         <Box className="flex">
           <AvatarPopover />
-          {/* <Avatar>{user.name.charAt(0)}</Avatar>
-          <Link onClick={handleSignOut} className="text-lg" href="/">
-            Sign Out
-          </Link> */}
         </Box>
       )}
 

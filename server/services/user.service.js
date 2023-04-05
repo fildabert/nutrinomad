@@ -4,6 +4,7 @@ const validator = require('validator');
 const UserModel = require('../models/user.model');
 const FoodDiaryModel = require('../models/foodDiary.model');
 const userValidator = require('../validators/user.validator');
+const multerUploads = require('../middlewares/multer');
 
 const hashPassword = async (password) => {
   if (!validator.isStrongPassword(password)) {
@@ -132,26 +133,94 @@ const updateUserById = async (id, userData) => {
     return null;
   }
   try {
+    const { error, value } = userValidator.updateUserValidator.validate(
+      userData,
+      { stripUnknown: true }
+    );
+
+    if (error) {
+      throw Error(error.details[0].message);
+    }
+
     const user = await getUserById(id);
     const { email: currentEmail } = user;
 
-    if (userData.email !== currentEmail) {
-      const emailExists = await UserModel.findOne({ email: userData.email });
+    if (value.email !== currentEmail) {
+      const emailExists = await UserModel.findOne({ email: value.email });
       if (emailExists) {
         throw Error('Someone already signed up with this email.');
       }
     }
 
-    const hash = await hashPassword(userData.password);
-    userData.password = hash;
-
     const updatedUser = await UserModel.findOneAndUpdate(
       { _id: id },
-      { ...userData },
+      { ...value, password: user.password },
+      { new: true }
+    );
+    if (value.avatar) {
+      updatedUser.avatar = value.avatar;
+      await updatedUser.save();
+    }
+    await updatedUser.calculateBmrAndMacroIntake();
+    return updatedUser;
+  } catch (err) {
+    throw err;
+  }
+};
+
+const comparePassword = async (password, hashedPassword) => {
+  try {
+    const isMatch = await bcrypt.compare(password, hashedPassword);
+    return isMatch;
+  } catch (error) {
+    throw Error('Error comparing passwords');
+  }
+};
+
+const updateUserPasswordById = async (id, currentPassword, newPassword) => {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return null;
+  }
+
+  try {
+    const user = await getUserById(id);
+    const isPasswordMatched = await comparePassword(
+      currentPassword,
+      user.password
+    );
+    if (!isPasswordMatched) {
+      throw Error('Incorrect password');
+    }
+    const hash = await hashPassword(newPassword);
+    const updatedUser = await UserModel.findOneAndUpdate(
+      { _id: id },
+      { password: hash },
       { new: true }
     );
     await updatedUser.calculateBmrAndMacroIntake();
     return updatedUser;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const uploadAvatar = async (id, avatar) => {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return null;
+  }
+  try {
+    const user = await UserModel.findById(id);
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    if (avatar && avatar.buffer) {
+      // check if avatar object is defined and has a buffer property
+      user.avatar = avatar.buffer.toString('base64');
+    }
+    await user.save();
+    return user;
   } catch (error) {
     return { error: error.message };
   }
@@ -165,6 +234,8 @@ const userService = {
   getUserByEmail,
   deleteUserById,
   updateUserById,
+  updateUserPasswordById,
+  uploadAvatar,
 };
 
 module.exports = userService;

@@ -23,12 +23,12 @@ const NUTRIENT_ID = {
   CALORIES: 1008,
 };
 
-const DiaryEntryForm = ({ food, onCancel, currentDate }) => {
+const DiaryEntryForm = ({ food, onCancel, currentDate, currentMealType }) => {
   const [selectedServingSize, setSelectedServingSize] = useState(
     food.foodMeasures[0]
   );
   const [quantity, setQuantity] = useState(1);
-  const [mealType, setMealType] = useState('breakfast');
+  const [mealType, setMealType] = useState(currentMealType);
   const { user } = useContext(AuthContext);
 
   // Returns a nutrient based on it's id.

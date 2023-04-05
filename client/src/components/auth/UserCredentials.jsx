@@ -28,7 +28,6 @@ const UserCredentials = ({ name, email, password, updateFields }) => {
       </Typography>
       <TextField
         required
-        id="standard-required"
         label="Username"
         variant="outlined"
         className="mt-8 mb-4"
@@ -38,7 +37,6 @@ const UserCredentials = ({ name, email, password, updateFields }) => {
       />
       <TextField
         required
-        id="standard-required"
         label="Email"
         variant="outlined"
         className="my-4"
@@ -49,12 +47,9 @@ const UserCredentials = ({ name, email, password, updateFields }) => {
         }}
       />
       <FormControl variant="outlined" className="my-4">
-        <InputLabel htmlFor="outlined-adornment-password" required>
-          Password
-        </InputLabel>
+        <InputLabel required>Password</InputLabel>
         <OutlinedInput
           required
-          id="outlined-adornment-password"
           type={showPassword ? 'text' : 'password'}
           value={password}
           onChange={(e) => updateFields({ password: e.target.value })}

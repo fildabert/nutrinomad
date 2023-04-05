@@ -7,6 +7,8 @@ module.exports = {
       colors: {
         'pastel-blue': '#e4f9ff',
         'bright-green': '#00b900',
+        'pastel-green': '#ccffcc',
+        'selected-blue': '#bdd5de',
       },
     },
   },

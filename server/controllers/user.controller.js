@@ -82,12 +82,44 @@ const deleteUser = async (req, res) => {
 
 // Update user by id
 const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await userService.updateUserById(id, req.body);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+};
+
+//Update user password
+const updateUserPassword = async (req, res) => {
   const { id } = req.params;
-  const user = await userService.updateUserById(id, req.body);
-  if (!user) {
-    return res.status(404).json({ error: 'User not found' });
+  const { currentPassword, newPassword } = req.body;
+  const user = await userService.updateUserPasswordById(
+    id,
+    currentPassword,
+    newPassword
+  );
+  if (user.error) {
+    return res.status(400).json({ error: user.error });
   }
   res.status(200).json(user);
+};
+
+const uploadAvatar = async (req, res) => {
+  const { id } = req.params;
+  const avatar = req.file;
+  try {
+    const user = await userService.uploadAvatar(id, avatar);
+    console.log(avatar);
+    console.log(user);
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 };
 
 module.exports = {
@@ -98,4 +130,6 @@ module.exports = {
   getUserBmrAndMacroByEmail,
   deleteUser,
   updateUser,
+  updateUserPassword,
+  uploadAvatar,
 };

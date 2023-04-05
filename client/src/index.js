@@ -12,6 +12,11 @@ import FoodDiary from './pages/app/FoodDiary';
 import FoodSearch from './pages/app/FoodSearch';
 import { MealContextProvider } from './context/MealContext';
 import SignUp from './pages/auth/SignUp';
+import Dashboard from './pages/app/Dashboard';
+import Profile from './pages/app/Profile';
+import { UserContextProvider } from './context/UserContext';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
 
 const router = createBrowserRouter([
   {
@@ -38,6 +43,14 @@ const router = createBrowserRouter([
     path: '/food/search',
     element: <FoodSearch />,
   },
+  {
+    path: '/food/dashboard',
+    element: <Dashboard />,
+  },
+  {
+    path: '/user/profile',
+    element: <Profile />,
+  },
 ]);
 
 const theme = createTheme({
@@ -56,16 +69,24 @@ const theme = createTheme({
     fontWeightMedium: 500,
     fontWeightBold: 700,
   },
+  components: {
+    MuiDialog: {
+      defaultProps: {
+        container: document.querySelector('#root'),
+      },
+    },
+  },
 });
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
       <AuthContextProvider>
-        <MealContextProvider>
-          <RouterProvider router={router} />
-        </MealContextProvider>
+        <UserContextProvider>
+          <MealContextProvider>
+            <RouterProvider router={router} />
+          </MealContextProvider>
+        </UserContextProvider>
       </AuthContextProvider>
     </ThemeProvider>
   </React.StrictMode>

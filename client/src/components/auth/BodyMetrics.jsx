@@ -20,7 +20,6 @@ const BodyMetrics = ({ sex, age, height, weight, updateFields }) => {
         <FormLabel>What is your biological sex?</FormLabel>
         <RadioGroup
           row
-          name="radio-buttons-group"
           onChange={(e) => updateFields({ sex: e.target.value })}
           value={sex}
         >
@@ -53,7 +52,6 @@ const BodyMetrics = ({ sex, age, height, weight, updateFields }) => {
         <FormLabel>How tall are you?</FormLabel>
         <Input
           required
-          id="standard-adornment-weight"
           endAdornment={<InputAdornment position="end">cm</InputAdornment>}
           className="w-1/2"
           value={height}
@@ -65,7 +63,6 @@ const BodyMetrics = ({ sex, age, height, weight, updateFields }) => {
         <FormLabel>How much do you weigh?</FormLabel>
         <Input
           required
-          id="standard-adornment-weight"
           endAdornment={<InputAdornment position="end">kg</InputAdornment>}
           className="w-1/2"
           value={weight}

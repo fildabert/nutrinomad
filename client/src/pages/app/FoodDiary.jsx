@@ -1,13 +1,14 @@
 import {
   Box,
   Button,
+  Card,
   CircularProgress,
   Container,
   Typography,
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import emptyPlate from '../../assets/images/empty-plate.png';
+import { useEffect, useState } from 'react';
 import DiaryDate from '../../components/food-diary/DiaryDate';
-import Navbar from '../../components/layout/Navbar';
 import FoodCard from '../../components/food-diary/FoodCard';
 import { useNavigate } from 'react-router-dom';
 import ManageFoodForm from '../../components/form/ManageFoodForm';
@@ -17,6 +18,8 @@ import { useAuthContext } from '../../hooks/useAuthContext';
 import { MEAL_ACTIONS } from '../../context/MealContext';
 import CalorieCounter from '../../components/food-diary/CalorieCounter';
 import NutrientRadialBarChart from '../../components/chart/NutrientRadialBarChart';
+import AddIcon from '@mui/icons-material/Add';
+import AppLayout from '../../components/layout/AppLayout';
 
 const FoodDiary = () => {
   const navigate = useNavigate();
@@ -82,62 +85,12 @@ const FoodDiary = () => {
     }
     return Math.round(totalMacro);
   };
-  const renderMealsByType = (mealType) => {
-    if (!meals) {
-      return (
-        <Box mt={2}>
-          <Typography variant="subtitle1">No food yet</Typography>
-        </Box>
-      );
-    }
-
-    const mealTypeMeals = meals.filter((meal) => meal.mealType === mealType);
-    const foodsIsEmpty = mealTypeMeals.some((meal) => meal.foods.length === 0);
-
-    if (isLoading) {
-      return (
-        <Box mt={2}>
-          <Typography variant="h1">
-            <CircularProgress />
-          </Typography>
-        </Box>
-      );
-    }
-    if (mealTypeMeals.length === 0 || foodsIsEmpty) {
-      return (
-        <Box mt={2}>
-          <Typography variant="subtitle1">No food yet</Typography>
-        </Box>
-      );
-    }
-
-    return (
-      <Box mt={2}>
-        {mealTypeMeals.map((meal) => (
-          <Box key={meal._id} className="my-2">
-            {meal.foods.map((food) => (
-              <FoodCard
-                key={food._id}
-                foodData={food}
-                isLoading={isLoading}
-                onClick={() => {
-                  setSelectedFood(food);
-                  setSelectedMeal(meal);
-                  setIsDialogOpen(true);
-                }}
-              />
-            ))}
-          </Box>
-        ))}
-      </Box>
-    );
-  };
 
   const handleDialogClose = () => {
     setIsDialogOpen(false);
   };
 
-  const handleAddFoodButton = () => {
+  const handleAddFoodButton = (mealType) => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth() + 1;
     const day = currentDate.getDate();
@@ -145,70 +98,152 @@ const FoodDiary = () => {
     const date = `${year}-${month.toString().padStart(2, '0')}-${day
       .toString()
       .padStart(2, '0')}`;
-    navigate('/food/search', { state: { date } });
+    navigate('/food/search', { state: { date, mealType } });
   };
-  return (
-    <>
-      <Container maxWidth="md">
-        <Navbar />
-      </Container>
-      <DiaryDate currentDate={currentDate} setCurrentDate={setCurrentDate} />
-      <CalorieCounter
-        bmr={bmr}
-        totalCalories={calculateTotalMacro('calories')}
-      />
 
-      <Box className="flex justify-center">
-        <NutrientRadialBarChart
-          name="Carbs"
-          value={calculateTotalMacro('carbs')}
-          max={carbsIntake}
-          fill="#99CC66"
+  const renderMealsByType = (mealType) => {
+    const mealTypeMeals = meals.filter((meal) => meal.mealType === mealType);
+    const foodsIsEmpty = mealTypeMeals.some((meal) => meal.foods.length === 0);
+
+    if (isLoading) {
+      return (
+        <Box className="my-2 flex justify-center">
+          <CircularProgress />
+        </Box>
+      );
+    }
+    if (mealTypeMeals.length === 0 || foodsIsEmpty) {
+      return (
+        <Box className="p-7 text-center">
+          <Button
+            variant="contained"
+            onClick={() => handleAddFoodButton(mealType)}
+            startIcon={<AddIcon />}
+          >
+            Add Food to {mealType}
+          </Button>
+        </Box>
+      );
+    }
+
+    return (
+      <>
+        <Box className="mt-2 max-w-min mx-auto">
+          {mealTypeMeals.map((meal) => (
+            <Box key={meal._id} className="my-2">
+              {meal.foods.map((food) => (
+                <FoodCard
+                  key={food._id}
+                  foodData={food}
+                  isLoading={isLoading}
+                  onClick={() => {
+                    setSelectedFood(food);
+                    setSelectedMeal(meal);
+                    setIsDialogOpen(true);
+                  }}
+                />
+              ))}
+            </Box>
+          ))}
+        </Box>
+        <Box className="p-7 text-center">
+          <Button
+            variant="contained"
+            onClick={() => handleAddFoodButton(mealType)}
+            startIcon={<AddIcon />}
+          >
+            Add Food to {mealType}
+          </Button>
+        </Box>
+      </>
+    );
+  };
+
+  const MealCard = ({ mealType }) => {
+    return (
+      <Card className="bg-green-50 p-4 rounded-3xl w-full my-2">
+        <Typography variant="h6" align="center">
+          {/* Set uppercase to the first character */}
+          {mealType.charAt(0).toUpperCase() + mealType.slice(1)}
+        </Typography>
+        {renderMealsByType(mealType)}
+      </Card>
+    );
+  };
+
+  const renderMeals = () => {
+    const mealTypes = ['breakfast', 'lunch', 'dinner', 'snack'];
+    if (!meals || meals.length === 0) {
+      return (
+        <>
+          <Container className="flex flex-col items-center h-screen my-20">
+            <img
+              src={emptyPlate}
+              alt="Illustration"
+              className="w-1/6 my-4"
+            ></img>
+            <Typography variant="h5" className="my-4">
+              Looks like you haven't eaten anything yet today
+            </Typography>
+
+            <Button
+              variant="contained"
+              className="my-4"
+              onClick={() => handleAddFoodButton('breakfast')}
+              startIcon={<AddIcon />}
+            >
+              Add Food
+            </Button>
+          </Container>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <Box className="flex justify-center">
+            <NutrientRadialBarChart
+              name="Carbs"
+              value={calculateTotalMacro('carbs')}
+              max={carbsIntake}
+              fill="#99CC66"
+            />
+            <NutrientRadialBarChart
+              name="Fat"
+              value={calculateTotalMacro('fat')}
+              max={fatIntake}
+              fill="#FFE07D"
+            />
+            <NutrientRadialBarChart
+              name="Protein"
+              value={calculateTotalMacro('protein')}
+              max={proteinIntake}
+              fill="#CC3366"
+            />
+          </Box>
+
+          <Container className="flex flex-col items-center my-4">
+            {mealTypes.map((mealType) => (
+              <MealCard mealType={mealType} />
+            ))}
+          </Container>
+        </>
+      );
+    }
+  };
+
+  return (
+    <AppLayout>
+      <Box>
+        <DiaryDate currentDate={currentDate} setCurrentDate={setCurrentDate} />
+
+        <CalorieCounter
+          bmr={bmr}
+          totalCalories={calculateTotalMacro('calories')}
         />
-        <NutrientRadialBarChart
-          name="Fat"
-          value={calculateTotalMacro('fat')}
-          max={fatIntake}
-          fill="#FFE07D"
-        />
-        <NutrientRadialBarChart
-          name="Protein"
-          value={calculateTotalMacro('protein')}
-          max={proteinIntake}
-          fill="#CC3366"
-        />
+
+        {renderMeals()}
       </Box>
-      <Box display="flex" justifyContent="center">
-        <Button variant="contained" onClick={handleAddFoodButton}>
-          Add Food
-        </Button>
-      </Box>
-      <Container className="flex flex-col items-center">
-        <Box mt={4}>
-          <Typography variant="h6" align="center">
-            Breakfast
-          </Typography>
-          {renderMealsByType('breakfast')}
-        </Box>
-        <Box mt={4}>
-          <Typography variant="h6" align="center">
-            Lunch
-          </Typography>
-          {renderMealsByType('lunch')}
-        </Box>
-        <Box mt={4}>
-          <Typography variant="h6" align="center">
-            Dinner
-          </Typography>
-          {renderMealsByType('dinner')}
-        </Box>
-        <Box mt={4}>
-          <Typography variant="h6" align="center">
-            Snacks
-          </Typography>
-          {renderMealsByType('snack')}
-        </Box>
-      </Container>
+
       {selectedFood && (
         <ManageFoodForm
           open={isDialogOpen}
@@ -218,7 +253,7 @@ const FoodDiary = () => {
           date={dateString}
         />
       )}
-    </>
+    </AppLayout>
   );
 };
 
