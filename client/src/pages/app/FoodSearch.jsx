@@ -13,6 +13,7 @@ import {
   Typography,
 } from '@mui/material';
 import FoodCard from '../../components/food-diary/FoodCard';
+import questionMark from '../../assets/images/question-mark.png';
 import DiaryEntryForm from '../../components/form/DiaryEntryForm';
 import { useLocation } from 'react-router-dom';
 import AppLayout from '../../components/layout/AppLayout';
@@ -103,7 +104,7 @@ const FoodSearch = () => {
       return (
         <>
           {[...Array(rowsPerPage)].map((_, index) => (
-            <Card key={`skeleton-${index}`} className="w-11/12 p-2 mb-2">
+            <Card key={`skeleton-${index}`} className="h-20 w-7/12 p-2 mb-2">
               <CardContent>
                 <Skeleton animation="wave" height={30} />
                 <Skeleton animation="wave" height={20} width="50%" />
@@ -174,7 +175,16 @@ const FoodSearch = () => {
       <Box className="mt-5 flex flex-col items-center">
         {error && <Typography color="error">{error}</Typography>}
         {foods.length === 0 && !error && (
-          <Typography className="text-gray-500">No results found.</Typography>
+          <Box>
+            <img
+              src={questionMark}
+              alt="Illustration"
+              className="w-1/2 my-4 block mx-auto"
+            ></img>
+            <Typography className="text-gray-500 text-center">
+              No foods match your search. Try something different!
+            </Typography>
+          </Box>
         )}
         {foods.length > 0 && renderFoodCards()}
       </Box>
