@@ -5,6 +5,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Divider,
   FormControl,
   Grid,
   InputLabel,
@@ -78,15 +79,15 @@ const ManageFoodForm = ({ foodData, meal, open, onClose, date }) => {
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>{foodData.name}</DialogTitle>
       <DialogContent>
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={8}>
-            <Box>
-              <Typography sx={{ color: 'GrayText' }}>
-                {foodData.foodCategory}
-              </Typography>
-              <Box mt={2}>
+        <Box>
+          <Typography className="text-gray-500">
+            {foodData.foodCategory}
+          </Typography>
+          <Grid container spacing={2} className="my-4">
+            <Grid item xs={6}>
+              <Box className="flex flex-col space-y-4">
                 <TextField
-                  sx={{ width: 1 / 4 }}
+                  className="w-1/4"
                   label="Quantity"
                   variant="standard"
                   type="number"
@@ -94,10 +95,7 @@ const ManageFoodForm = ({ foodData, meal, open, onClose, date }) => {
                   inputProps={{ min: 1 }}
                   onChange={handleQuantityChange}
                 />
-              </Box>
-
-              <Box mt={2}>
-                <FormControl sx={{ width: 3 / 4 }}>
+                <FormControl className="w-2/3">
                   <InputLabel>Meal Type</InputLabel>
                   <Select
                     label="Meal Type"
@@ -111,61 +109,163 @@ const ManageFoodForm = ({ foodData, meal, open, onClose, date }) => {
                   </Select>
                 </FormControl>
               </Box>
-
-              <Box mt={2}>
-                <Typography>
-                  <Typography component="span" sx={{ fontWeight: 'bold' }}>
-                    Serving size:{' '}
-                  </Typography>
-                  {foodData.servingSize}
-                </Typography>
-                <Typography>
-                  <Typography
-                    component="span"
-                    sx={{ fontWeight: 'bold', color: '#CC3366' }}
-                  >
-                    Protein:{' '}
-                  </Typography>
-                  {foodData.protein} g
-                </Typography>
-                <Typography>
-                  <Typography
-                    component="span"
-                    sx={{ fontWeight: 'bold', color: '#FFE07D' }}
-                  >
-                    Fat:{' '}
-                  </Typography>
-                  {foodData.fat} g
-                </Typography>
-                <Typography>
-                  <Typography
-                    component="span"
-                    sx={{ fontWeight: 'bold', color: '#99CC66' }}
-                  >
-                    Carbs:{' '}
-                  </Typography>
-                  {foodData.carbs} g
-                </Typography>
-                <Typography>
-                  <Typography component="span" sx={{ fontWeight: 'bold' }}>
-                    Calories:{' '}
-                  </Typography>
-                  {foodData.calories} kcal
-                </Typography>
-              </Box>
-            </Box>
-          </Grid>
-
-          <Grid item xs={12} md={4}>
-            <Box>
+            </Grid>
+            <Grid item xs={6} className="pl-20">
               <NutrientPieChart
                 protein={foodData.protein}
-                fat={foodData.protein}
+                fat={foodData.fat}
                 carbs={foodData.carbs}
               />
-            </Box>
+            </Grid>
           </Grid>
-        </Grid>
+
+          <Box className="space-y-3">
+            <Divider />
+            <Typography variant="h5" className="font-bold">
+              {foodData.calories} kcal
+            </Typography>
+
+            <Typography>
+              <Typography component="span" className="font-bold">
+                Serving size:{' '}
+              </Typography>
+              {foodData.servingSize}
+            </Typography>
+
+            <Divider />
+
+            <Box>
+              <Typography
+                variant="overline"
+                component="p"
+                className="text-center font-bold"
+              >
+                Macronutrients
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={4}>
+                  <Typography>
+                    <Typography
+                      component="span"
+                      className="font-bold text-protein-red"
+                    >
+                      Protein:{' '}
+                    </Typography>
+                    {foodData.protein} g
+                  </Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography>
+                    <Typography
+                      component="span"
+                      className="font-bold text-fat-yellow"
+                    >
+                      Fat:{' '}
+                    </Typography>
+                    {foodData.fat} g
+                  </Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography>
+                    <Typography
+                      component="span"
+                      className="font-bold text-carbs-green"
+                    >
+                      Carbs:{' '}
+                    </Typography>
+                    {foodData.carbs} g
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Box>
+
+            <Divider />
+
+            <Box>
+              <Typography
+                variant="overline"
+                component="p"
+                className="text-center font-bold"
+              >
+                Micronutrients
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={4}>
+                  <Typography>
+                    <Typography component="span" className="font-bold">
+                      Sugar:{' '}
+                    </Typography>
+                    {foodData.sugar} g
+                  </Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography>
+                    <Typography component="span" className="font-bold">
+                      Sodium:{' '}
+                    </Typography>
+                    {foodData.sodium} mg
+                  </Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography>
+                    <Typography component="span" className="font-bold">
+                      Calcium:{' '}
+                    </Typography>
+                    {foodData.calcium} mg
+                  </Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography>
+                    <Typography component="span" className="font-bold">
+                      Iron:{' '}
+                    </Typography>
+                    {foodData.iron} mg
+                  </Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography>
+                    <Typography component="span" className="font-bold">
+                      Vitamin A:{' '}
+                    </Typography>
+                    {foodData.vitaminA} μg
+                  </Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography>
+                    <Typography component="span" className="font-bold">
+                      Vitamin B12:{' '}
+                    </Typography>
+                    {foodData.vitaminB12} μg
+                  </Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography>
+                    <Typography component="span" className="font-bold">
+                      Vitamin C:{' '}
+                    </Typography>
+                    {foodData.vitaminC} mg
+                  </Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography>
+                    <Typography component="span" className="font-bold">
+                      Vitamin D:{' '}
+                    </Typography>
+                    {foodData.vitaminD} μg
+                  </Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography>
+                    <Typography component="span" className="font-bold">
+                      Vitamin E:{' '}
+                    </Typography>
+                    {foodData.vitaminE} mg
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Box>
+          </Box>
+        </Box>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>

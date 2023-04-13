@@ -39,6 +39,111 @@ const getMealsByUserIdAndDate = async (userId, date) => {
   }
 };
 
+const getMealsByUserIdAndDateRange = async (userId, startDate, endDate) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return null;
+    }
+    const diary = await getDiaryByUserId(userId);
+    const mealIds = diary.meals;
+    const meals = [];
+    for (const mealId of mealIds) {
+      const meal = await mealService.getMealById(mealId);
+      if (meal && meal.date >= startDate && meal.date <= endDate) {
+        const foods = [];
+        for (const foodId of meal.foods) {
+          const food = await foodService.getFoodById(foodId);
+          foods.push(food);
+        }
+        meals.push({ ...meal.toObject(), foods });
+      }
+    }
+
+    return meals;
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+
+const generateCalendarData = async (userId) => {
+  // Get diary for user
+  const diary = await getDiaryByUserId(userId);
+
+  // Get meals for each day in the year
+  const startDate = new Date(new Date().getFullYear(), 0, 1);
+  const endDate = new Date(new Date().getFullYear(), 11, 31);
+  const meals = await getMealsByUserIdAndDateRange(userId, startDate, endDate);
+
+  // Group meals by date
+  const mealsByDate = {};
+
+  meals.forEach((meal) => {
+    const date = meal.date.toISOString().slice(0, 10);
+    mealsByDate[date] = mealsByDate[date] || [];
+    mealsByDate[date].push(meal);
+  });
+
+  // Calculate number of foods for each day
+  const data = [];
+  const currentDate = new Date(startDate);
+  while (currentDate <= endDate) {
+    const date = currentDate.toISOString().slice(0, 10);
+    const meals = mealsByDate[date] || [];
+    const numFoods = meals.reduce((acc, meal) => acc + meal.foods.length, 0);
+    if (numFoods > 0) {
+      data.push({
+        day: date,
+        value: numFoods,
+      });
+    }
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+
+  return data;
+};
+
+const getCaloriesConsumedLast7Days = async (userId) => {
+  const endDate = new Date();
+  const startDate = new Date(endDate);
+  startDate.setDate(startDate.getDate() - 7);
+
+  const meals = await getMealsByUserIdAndDateRange(userId, startDate, endDate);
+
+  const caloriesPerDay = {};
+  meals.forEach((meal) => {
+    const date = meal.date.toDateString();
+    let totalCalories = 0;
+    meal.foods.forEach((food) => {
+      totalCalories += food.calories;
+    });
+    if (!caloriesPerDay[date]) {
+      caloriesPerDay[date] = 0;
+    }
+    caloriesPerDay[date] += totalCalories;
+  });
+
+  const data = [];
+  const days = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ];
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+    const dayOfWeek = days[date.getDay()];
+    const dateString = date.toDateString();
+    const calories = caloriesPerDay[dateString] || 0;
+    data.push({ x: dayOfWeek, y: calories });
+  }
+
+  return data;
+};
+
 const addMealToDiary = async (userId, mealData) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -169,6 +274,8 @@ const editMealFromDiary = async (userId, foodId, mealData) => {
 const foodDiaryService = {
   getDiaryByUserId,
   getMealsByUserIdAndDate,
+  generateCalendarData,
+  getCaloriesConsumedLast7Days,
   addMealToDiary,
   deleteMealFromDiary,
   editMealFromDiary,

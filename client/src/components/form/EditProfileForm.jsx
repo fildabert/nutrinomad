@@ -223,7 +223,7 @@ const EditProfileForm = ({ userData, onCancel, onClose }) => {
           </Box>
         </Container>
 
-        <Box className="flex justify-end my-8">
+        <Box className="mt-8">
           <Button variant="contained" onClick={onCancel}>
             Cancel
           </Button>

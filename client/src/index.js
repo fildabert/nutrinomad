@@ -15,6 +15,7 @@ import SignUp from './pages/auth/SignUp';
 import Dashboard from './pages/app/Dashboard';
 import Profile from './pages/app/Profile';
 import { UserContextProvider } from './context/UserContext';
+import { closeSnackbar, SnackbarProvider } from 'notistack';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -84,7 +85,9 @@ root.render(
       <AuthContextProvider>
         <UserContextProvider>
           <MealContextProvider>
-            <RouterProvider router={router} />
+            <SnackbarProvider maxSnack={4} preventDuplicate>
+              <RouterProvider router={router} />
+            </SnackbarProvider>
           </MealContextProvider>
         </UserContextProvider>
       </AuthContextProvider>

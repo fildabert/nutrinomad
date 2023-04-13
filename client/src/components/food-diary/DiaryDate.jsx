@@ -40,7 +40,11 @@ const DiaryDate = ({ currentDate, setCurrentDate }) => {
         <ChevronLeft />
       </IconButton>
 
-      <Typography variant="h6" onClick={handlePopoverOpen}>
+      <Typography
+        variant="h6"
+        onClick={handlePopoverOpen}
+        className="w-72 text-center"
+      >
         {formattedDate}
       </Typography>
 

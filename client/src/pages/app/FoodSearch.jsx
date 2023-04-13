@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import useFoodSearch from '../../hooks/useFoodSearch';
 import {
+  Alert,
   Box,
   Card,
   CardContent,
@@ -9,6 +10,8 @@ import {
   List,
   Pagination,
   Skeleton,
+  Snackbar,
+  TablePagination,
   TextField,
   Typography,
 } from '@mui/material';
@@ -23,6 +26,15 @@ const NUTRIENT_ID = {
   FAT: 1004,
   CARBS: 1005,
   CALORIES: 1008,
+  SUGAR: 2000,
+  SODIUM: 1093,
+  CALCIUM: 1087,
+  IRON: 1089,
+  VITAMIN_A: 1106,
+  VITAMIN_B12: 1178,
+  VITAMIN_C: 1162,
+  VITAMIN_D: 1114,
+  VITAMIN_E: 1109,
 };
 
 const FoodSearch = () => {
@@ -37,6 +49,8 @@ const FoodSearch = () => {
   );
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   const [searchFood, foods, error, isLoading] = useFoodSearch();
 
@@ -56,6 +70,17 @@ const FoodSearch = () => {
 
   const handleServingSizeSelect = (servingSize) => {
     setSelectedServingSize(servingSize);
+  };
+
+  const handleSnackbarClose = () => {
+    setIsSnackbarOpen(false);
+  };
+
+  const handleAddToDiary = (food) => {
+    // add the food to the diary here
+    console.log(food);
+    setSnackbarMessage(`${food.description} added to diary!`);
+    setIsSnackbarOpen(true);
   };
 
   // Returns a measurement in grams if text is not specified.
@@ -96,7 +121,10 @@ const FoodSearch = () => {
   };
 
   const renderFoodCards = () => {
-    const indexOfLastFood = currentPage * rowsPerPage;
+    const indexOfLastFood = Math.min(
+      (currentPage + 1) * rowsPerPage,
+      foods.length
+    );
     const indexOfFirstFood = indexOfLastFood - rowsPerPage;
     const currentFoods = foods.slice(indexOfFirstFood, indexOfLastFood);
 
@@ -129,19 +157,26 @@ const FoodSearch = () => {
                 carbs: getNutrientValue(NUTRIENT_ID.CARBS, food),
                 fat: getNutrientValue(NUTRIENT_ID.FAT, food),
                 protein: getNutrientValue(NUTRIENT_ID.PROTEIN, food),
+                sugar: getNutrientValue(NUTRIENT_ID.SUGAR, food),
+                sodium: getNutrientValue(NUTRIENT_ID.SODIUM, food),
+                calcium: getNutrientValue(NUTRIENT_ID.CALCIUM, food),
+                iron: getNutrientValue(NUTRIENT_ID.IRON, food),
+                vitaminA: getNutrientValue(NUTRIENT_ID.VITAMIN_A, food),
+                vitaminB12: getNutrientValue(NUTRIENT_ID.VITAMIN_B12, food),
+                vitaminC: getNutrientValue(NUTRIENT_ID.VITAMIN_C, food),
+                vitaminD: getNutrientValue(NUTRIENT_ID.VITAMIN_D, food),
+                vitaminE: getNutrientValue(NUTRIENT_ID.VITAMIN_E, food),
                 quantity: 1,
               }}
               onClick={() => setSelectedFood(food)}
             />
           ))}
         </List>
-        <Pagination
-          count={Math.ceil(foods.length / rowsPerPage)}
+        <TablePagination
+          count={foods.length}
           page={currentPage}
-          onChange={(event, value) => setCurrentPage(value)}
-          color="primary"
-          variant="outlined"
-          shape="rounded"
+          rowsPerPage={rowsPerPage}
+          onPageChange={(event, value) => setCurrentPage(value)}
           showFirstButton
           showLastButton
           rowsPerPageOptions={[5, 10]}
@@ -188,7 +223,6 @@ const FoodSearch = () => {
         )}
         {foods.length > 0 && renderFoodCards()}
       </Box>
-
       {selectedFood && (
         <DiaryEntryForm
           food={selectedFood}
@@ -197,8 +231,23 @@ const FoodSearch = () => {
           onCancel={() => setSelectedFood(null)}
           currentDate={currentDate}
           currentMealType={mealType}
+          onAddToDiary={() => handleAddToDiary(selectedFood)}
         />
       )}
+
+      <Snackbar
+        open={isSnackbarOpen}
+        onClose={handleSnackbarClose}
+        autoHideDuration={5000} // automatically hide the snackbar after 5 seconds
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+      >
+        <Alert onClose={handleSnackbarClose} severity="success">
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </AppLayout>
   );
 };

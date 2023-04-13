@@ -13,7 +13,7 @@ import { ReactComponent as NutriNomadLogo } from '../../assets/images/nutrinomad
 
 const Footer = () => {
   return (
-    <div className="fixed bottom-0 left-0 right-0 h-16 px-12 py-16 bg-sky-900 text-white flex items-center justify-center">
+    <div className="bottom-0 left-0 right-0 h-16 px-12 py-16 bg-sky-900 text-white flex items-center justify-center">
       <NutriNomadLogo className="w-40" />
       <Box className="mx-auto text-center">
         <Typography variant="body2">

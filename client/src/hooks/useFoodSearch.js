@@ -12,8 +12,9 @@ const useFoodSearch = () => {
       let response;
       if (query.trim() !== '') {
         response = await axios.get(
-          `${process.env.REACT_APP_USDA_API_URL}/foods/search?api_key=${process.env.REACT_APP_USDA_API_KEY}&query=${query}*&dataType=Survey%20(FNDDS)`
+          `${process.env.REACT_APP_USDA_API_URL}/foods/search?api_key=${process.env.REACT_APP_USDA_API_KEY}&query=${query}&dataType=Survey%20(FNDDS)&sort=relevance`
         );
+        console.log(response.data);
       } else {
         response = { data: { foods: [] } };
       }

@@ -20,6 +20,7 @@ import CalorieCounter from '../../components/food-diary/CalorieCounter';
 import NutrientRadialBarChart from '../../components/chart/NutrientRadialBarChart';
 import AddIcon from '@mui/icons-material/Add';
 import AppLayout from '../../components/layout/AppLayout';
+import MicroNutrientTracker from '../../components/food-diary/MicroNutrientTracker';
 
 const FoodDiary = () => {
   const navigate = useNavigate();
@@ -31,6 +32,7 @@ const FoodDiary = () => {
   const [proteinIntake, setProteinIntake] = useState(0);
   const [fatIntake, setFatIntake] = useState(0);
   const [carbsIntake, setCarbsIntake] = useState(0);
+  const [minMicronutrientIntake, setMinMicronutrientIntake] = useState({});
   const [isLoading, setIsLoading] = useState(true);
 
   // Get necessary data from context
@@ -53,7 +55,7 @@ const FoodDiary = () => {
     mealDispatch({ type: MEAL_ACTIONS.SET_MEALS, payload: data });
     setIsLoading(false);
   };
-  const fetchBmr = async () => {
+  const fetchNutritionalInfo = async () => {
     if (!user) {
       return;
     }
@@ -63,15 +65,17 @@ const FoodDiary = () => {
     const protein = data.proteinIntake;
     const fat = data.fatIntake;
     const carbs = data.carbsIntake;
+    const micronutrients = data.minMicronutrientIntake;
     setBmr(userBmr);
     setProteinIntake(protein);
     setFatIntake(fat);
     setCarbsIntake(carbs);
+    setMinMicronutrientIntake(micronutrients);
   };
 
   useEffect(() => {
     //fetch data in parallel
-    Promise.all([fetchMeals(dateString), fetchBmr()]);
+    Promise.all([fetchMeals(dateString), fetchNutritionalInfo()]);
   }, [currentDate, user]);
 
   const calculateTotalMacro = (macro) => {
@@ -84,6 +88,20 @@ const FoodDiary = () => {
       });
     }
     return Math.round(totalMacro);
+  };
+
+  const calculateTotalMicro = (micro) => {
+    let totalMicro = 0;
+    if (meals) {
+      meals.forEach((meal) => {
+        meal.foods.forEach((food) => {
+          if (food[micro]) {
+            totalMicro += food[micro];
+          }
+        });
+      });
+    }
+    return totalMicro.toFixed(2);
   };
 
   const handleDialogClose = () => {
@@ -200,7 +218,7 @@ const FoodDiary = () => {
     } else {
       return (
         <>
-          <Box className="flex justify-center">
+          <Box className="flex justify-center w-1/3 h-24 mx-auto">
             <NutrientRadialBarChart
               name="Carbs"
               value={calculateTotalMacro('carbs')}
@@ -220,10 +238,14 @@ const FoodDiary = () => {
               fill="#CC3366"
             />
           </Box>
+          <MicroNutrientTracker
+            minMicronutrientIntake={minMicronutrientIntake}
+            calculateTotalMicro={calculateTotalMicro}
+          />
 
           <Container className="flex flex-col items-center my-4">
-            {mealTypes.map((mealType) => (
-              <MealCard mealType={mealType} />
+            {mealTypes.map((mealType, index) => (
+              <MealCard key={index} mealType={mealType} />
             ))}
           </Container>
         </>

@@ -42,7 +42,7 @@ const signUpUser = async (req, res) => {
   try {
     const user = await userService.signUp(req.body);
     await user.calculateBmrAndMacroIntake();
-
+    await user.calculateMinMicroIntake();
     const token = createToken(user._id);
 
     return res
@@ -65,6 +65,7 @@ const getUserBmrAndMacroByEmail = async (req, res) => {
     proteinIntake: user.proteinIntake,
     fatIntake: user.fatIntake,
     carbsIntake: user.carbsIntake,
+    minMicronutrientIntake: user.minMicronutrientIntake,
   });
 };
 

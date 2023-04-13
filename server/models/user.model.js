@@ -83,6 +83,17 @@ const userSchema = new Schema(
     fatIntake: {
       type: Number,
     },
+    minMicronutrientIntake: {
+      calcium: { type: Number },
+      iron: { type: Number },
+      vitaminA: { type: Number },
+      vitaminB12: { type: Number },
+      vitaminC: { type: Number },
+      vitaminD: { type: Number },
+      vitaminE: { type: Number },
+      sodium: { type: Number },
+      sugar: { type: Number },
+    },
     avatar: {
       type: String,
     },
@@ -138,6 +149,34 @@ userSchema.methods.calculateBmrAndMacroIntake = function () {
   this.fatIntake = fatIntake;
 
   this.bmr = Math.round(tdee);
+  return this.save();
+};
+
+//Calculate daily micronutrient intake
+userSchema.methods.calculateMinMicroIntake = function () {
+  const { sex, age } = this;
+
+  // Recommended Dietary Allowance (RDA) for each nutrient based on sex and age
+  const rdas = {
+    calcium:
+      sex === 'female' ? (age < 51 ? 1000 : 1200) : age < 71 ? 1000 : 1200,
+    iron: age < 51 ? (sex === 'male' ? 8 : 18) : sex === 'male' ? 8 : 8,
+    vitaminA: sex === 'male' ? 900 : 700,
+    vitaminB12: 2.4,
+    vitaminC: sex === 'male' ? 90 : 75,
+    vitaminD: age <= 70 ? 15 : 23,
+    vitaminE: 15,
+    sodium: 1500,
+    sugar: sex === 'male' ? 36 : 25,
+  };
+
+  // Set minimum intake for each nutrient
+  const minIntake = {};
+  for (const [nutrient, rda] of Object.entries(rdas)) {
+    minIntake[nutrient] = rda;
+  }
+
+  this.minMicronutrientIntake = minIntake;
   return this.save();
 };
 

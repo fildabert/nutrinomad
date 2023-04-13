@@ -162,6 +162,7 @@ const updateUserById = async (id, userData) => {
       await updatedUser.save();
     }
     await updatedUser.calculateBmrAndMacroIntake();
+    await updatedUser.calculateMinMicroIntake();
     return updatedUser;
   } catch (err) {
     throw err;

@@ -33,6 +33,26 @@ const redirectIfDateQueryParamExists = (req, res, next) => {
   next();
 };
 
+const generateCalendarData = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const data = await foodDiaryService.generateCalendarData(userId);
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const getCaloriesConsumedLast7Days = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const data = await foodDiaryService.getCaloriesConsumedLast7Days(userId);
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 //Add meal to diary
 const addMealToDiary = async (req, res) => {
   const { userId } = req.params;
@@ -74,6 +94,8 @@ const editMealFromDiary = async (req, res) => {
 module.exports = {
   getDiary,
   getMealsByUserIdAndDate,
+  generateCalendarData,
+  getCaloriesConsumedLast7Days,
   addMealToDiary,
   removeMealFromDiary,
   editMealFromDiary,

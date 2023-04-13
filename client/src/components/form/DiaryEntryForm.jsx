@@ -21,9 +21,23 @@ const NUTRIENT_ID = {
   FAT: 1004,
   CARBS: 1005,
   CALORIES: 1008,
+  SUGAR: 2000,
+  SODIUM: 1093,
+  CALCIUM: 1087,
+  IRON: 1089,
+  VITAMIN_A: 1106,
+  VITAMIN_B12: 1178,
+  VITAMIN_C: 1162,
+  VITAMIN_D: 1114,
+  VITAMIN_E: 1109,
 };
-
-const DiaryEntryForm = ({ food, onCancel, currentDate, currentMealType }) => {
+const DiaryEntryForm = ({
+  food,
+  onCancel,
+  currentDate,
+  currentMealType,
+  onAddToDiary,
+}) => {
   const [selectedServingSize, setSelectedServingSize] = useState(
     food.foodMeasures[0]
   );
@@ -71,10 +85,19 @@ const DiaryEntryForm = ({ food, onCancel, currentDate, currentMealType }) => {
   const selectedFood = {
     name: food.description,
     servingSize: getFoodMeasurement(food),
-    calories: getNutrientValue(NUTRIENT_ID.CALORIES, food),
-    carbs: getNutrientValue(NUTRIENT_ID.CARBS, food),
-    fat: getNutrientValue(NUTRIENT_ID.FAT, food),
-    protein: getNutrientValue(NUTRIENT_ID.PROTEIN, food),
+    calories: getNutrientValue(NUTRIENT_ID.CALORIES, food) * quantity,
+    carbs: getNutrientValue(NUTRIENT_ID.CARBS, food) * quantity,
+    fat: getNutrientValue(NUTRIENT_ID.FAT, food) * quantity,
+    protein: getNutrientValue(NUTRIENT_ID.PROTEIN, food) * quantity,
+    sugar: getNutrientValue(NUTRIENT_ID.SUGAR, food) * quantity,
+    sodium: getNutrientValue(NUTRIENT_ID.SODIUM, food) * quantity,
+    calcium: getNutrientValue(NUTRIENT_ID.CALCIUM, food) * quantity,
+    iron: getNutrientValue(NUTRIENT_ID.IRON, food) * quantity,
+    vitaminA: getNutrientValue(NUTRIENT_ID.VITAMIN_A, food) * quantity,
+    vitaminB12: getNutrientValue(NUTRIENT_ID.VITAMIN_B12, food) * quantity,
+    vitaminC: getNutrientValue(NUTRIENT_ID.VITAMIN_C, food) * quantity,
+    vitaminD: getNutrientValue(NUTRIENT_ID.VITAMIN_D, food) * quantity,
+    vitaminE: getNutrientValue(NUTRIENT_ID.VITAMIN_E, food) * quantity,
     quantity: quantity,
     foodCategory: food.foodCategory,
   };
@@ -87,6 +110,7 @@ const DiaryEntryForm = ({ food, onCancel, currentDate, currentMealType }) => {
     };
     //add meal to diary
     await axios.post(`/api/diary/${user._id}`, meal);
+    onAddToDiary();
     onCancel();
   };
 
@@ -95,8 +119,8 @@ const DiaryEntryForm = ({ food, onCancel, currentDate, currentMealType }) => {
       <DialogTitle>Add to Diary</DialogTitle>
       <DialogContent>
         <Typography variant="h6">{food.description}</Typography>
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-          <FormControl sx={{ width: 1 / 4 }}>
+        <Box className="flex justify-center mt-4">
+          <FormControl className="w-1/4">
             <InputLabel>Quantity</InputLabel>
             <OutlinedInput
               required
@@ -108,9 +132,9 @@ const DiaryEntryForm = ({ food, onCancel, currentDate, currentMealType }) => {
             />
           </FormControl>
 
-          <Typography sx={{ p: 2 }}>servings of</Typography>
+          <Typography className="p-4">servings of</Typography>
 
-          <FormControl sx={{ width: 1 / 2 }}>
+          <FormControl className="w-1/2">
             <InputLabel>Serving Size</InputLabel>
             <Select
               value={selectedServingSize}
@@ -118,7 +142,7 @@ const DiaryEntryForm = ({ food, onCancel, currentDate, currentMealType }) => {
               onChange={(e) => setSelectedServingSize(e.target.value)}
             >
               {food.foodMeasures.map((measure) => (
-                <MenuItem key={measure.sequence} value={measure}>
+                <MenuItem key={measure.id} value={measure}>
                   {measure.disseminationText === 'Quantity not specified'
                     ? `${measure.gramWeight} grams`
                     : measure.disseminationText}
@@ -128,7 +152,7 @@ const DiaryEntryForm = ({ food, onCancel, currentDate, currentMealType }) => {
           </FormControl>
         </Box>
 
-        <Typography sx={{ textAlign: 'center', my: 3 }}>for</Typography>
+        <Typography className="text-center my-6">for</Typography>
 
         <FormControl fullWidth>
           <InputLabel>Meal Type</InputLabel>
