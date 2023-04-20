@@ -6,9 +6,9 @@ import {
   Box,
   Card,
   CardContent,
+  Divider,
   InputAdornment,
   List,
-  Pagination,
   Skeleton,
   Snackbar,
   TablePagination,
@@ -20,6 +20,7 @@ import questionMark from '../../assets/images/question-mark.png';
 import DiaryEntryForm from '../../components/form/DiaryEntryForm';
 import { useLocation } from 'react-router-dom';
 import AppLayout from '../../components/layout/AppLayout';
+import { useAuthContext } from '../../hooks/useAuthContext';
 
 const NUTRIENT_ID = {
   PROTEIN: 1003,
@@ -47,12 +48,34 @@ const FoodSearch = () => {
   const [selectedServingSize, setSelectedServingSize] = useState(
     selectedFood ? selectedFood.foodMeasures[0] : null
   );
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [history, setHistory] = useState([]);
 
   const [searchFood, foods, error, isLoading] = useFoodSearch();
+
+  const { user } = useAuthContext();
+
+  let foodHistoryKey;
+
+  if (user) {
+    foodHistoryKey = `foodSearchHistory_${user._id}`;
+  }
+
+  useEffect(() => {
+    // Load the history from local storage
+    const storedHistory = localStorage.getItem(foodHistoryKey);
+    if (storedHistory) {
+      setHistory(JSON.parse(storedHistory));
+    }
+  }, []);
+
+  const saveHistoryToLocalStorage = (newHistory) => {
+    // Save the updated history to local storage
+    localStorage.setItem(foodHistoryKey, JSON.stringify(newHistory));
+  };
 
   useEffect(() => {
     searchFood(query);
@@ -77,7 +100,23 @@ const FoodSearch = () => {
   };
 
   const handleAddToDiary = (food) => {
-    // add the food to the diary here
+    // Check if food already exists in history
+    const index = history.findIndex((entry) => entry.fdcId === food.fdcId);
+    if (index !== -1) {
+      // If duplicate found, remove older entry and add new one to beginning of array
+      const updatedHistory = [
+        food,
+        ...history.filter((entry) => entry.fdcId !== food.fdcId),
+      ].slice(0, 5);
+      setHistory(updatedHistory);
+      saveHistoryToLocalStorage(updatedHistory);
+    } else {
+      // Add the food to the beginning of the history array
+      const updatedHistory = [food, ...history].slice(0, 5);
+      setHistory(updatedHistory);
+      saveHistoryToLocalStorage(updatedHistory);
+    }
+
     console.log(food);
     setSnackbarMessage(`${food.description} added to diary!`);
     setIsSnackbarOpen(true);
@@ -125,7 +164,7 @@ const FoodSearch = () => {
       (currentPage + 1) * rowsPerPage,
       foods.length
     );
-    const indexOfFirstFood = indexOfLastFood - rowsPerPage;
+    const indexOfFirstFood = currentPage * rowsPerPage;
     const currentFoods = foods.slice(indexOfFirstFood, indexOfLastFood);
 
     if (isLoading) {
@@ -145,6 +184,8 @@ const FoodSearch = () => {
 
     return (
       <>
+        {/* Render the search results */}
+        <Typography variant="h6">Search Results</Typography>
         <List>
           {currentFoods.map((food) => (
             <FoodCard
@@ -172,6 +213,8 @@ const FoodSearch = () => {
             />
           ))}
         </List>
+
+        {/* Render the pagination */}
         <TablePagination
           count={foods.length}
           page={currentPage}
@@ -184,6 +227,44 @@ const FoodSearch = () => {
           component="div"
         />
       </>
+    );
+  };
+
+  const renderFoodHistory = () => {
+    return (
+      <Box className="mb-4">
+        {/* Render the history of foods */}
+        <Typography variant="h6" className="text-center ">
+          History
+        </Typography>
+        <List>
+          {history.map((food) => (
+            <FoodCard
+              key={food.fdcId}
+              foodData={{
+                name: food.description,
+                foodCategory: food.foodCategory,
+                servingSize: getFoodMeasurement(food),
+                calories: getNutrientValue(NUTRIENT_ID.CALORIES, food),
+                carbs: getNutrientValue(NUTRIENT_ID.CARBS, food),
+                fat: getNutrientValue(NUTRIENT_ID.FAT, food),
+                protein: getNutrientValue(NUTRIENT_ID.PROTEIN, food),
+                sugar: getNutrientValue(NUTRIENT_ID.SUGAR, food),
+                sodium: getNutrientValue(NUTRIENT_ID.SODIUM, food),
+                calcium: getNutrientValue(NUTRIENT_ID.CALCIUM, food),
+                iron: getNutrientValue(NUTRIENT_ID.IRON, food),
+                vitaminA: getNutrientValue(NUTRIENT_ID.VITAMIN_A, food),
+                vitaminB12: getNutrientValue(NUTRIENT_ID.VITAMIN_B12, food),
+                vitaminC: getNutrientValue(NUTRIENT_ID.VITAMIN_C, food),
+                vitaminD: getNutrientValue(NUTRIENT_ID.VITAMIN_D, food),
+                vitaminE: getNutrientValue(NUTRIENT_ID.VITAMIN_E, food),
+                quantity: 1,
+              }}
+              onClick={() => setSelectedFood(food)}
+            />
+          ))}
+        </List>
+      </Box>
     );
   };
 
@@ -209,6 +290,9 @@ const FoodSearch = () => {
       </Box>
       <Box className="mt-5 flex flex-col items-center">
         {error && <Typography color="error">{error}</Typography>}
+
+        {history.length > 0 && renderFoodHistory()}
+
         {foods.length === 0 && !error && (
           <Box>
             <img
@@ -221,6 +305,7 @@ const FoodSearch = () => {
             </Typography>
           </Box>
         )}
+
         {foods.length > 0 && renderFoodCards()}
       </Box>
       {selectedFood && (

@@ -32,16 +32,51 @@ export const mealReducer = (state, action) => {
         })
         .filter((meal) => meal !== null); // Remove null values from the array
       return { meals: updatedMeals };
-      //TODO: needs fixing
+    //TODO: needs fixing
     case MEAL_ACTIONS.UPDATE_MEAL:
-      const updatedMeal = action.payload;
+      const { mealId, foodId, quantity, mealType } = action.payload;
       const updatedMeals2 = state.meals.map((meal) => {
-        if (meal._id === updatedMeal._id) {
-          return updatedMeal;
+        if (meal._id === mealId) {
+          const updatedFoods = meal.foods.map((food) => {
+            if (food._id === foodId) {
+              const quantityRatio = quantity / food.quantity;
+              const updatedNutrients = {};
+              const nutrients = [
+                'calories',
+                'protein',
+                'carbs',
+                'fat',
+                'sugar',
+                'sodium',
+                'calcium',
+                'iron',
+                'vitaminA',
+                'vitaminB12',
+                'vitaminC',
+                'vitaminD',
+                'vitaminE',
+              ];
+              nutrients.forEach((nutrient) => {
+                updatedNutrients[nutrient] = +(
+                  food[nutrient] * quantityRatio
+                ).toFixed(2);
+              });
+              return {
+                ...food,
+                ...updatedNutrients,
+                quantity,
+              };
+            }
+            return food;
+          });
+          const updatedMeal = { ...meal, foods: updatedFoods };
+          const mealTypeChanged = updatedMeal.mealType !== mealType;
+          return mealTypeChanged ? { ...updatedMeal, mealType } : updatedMeal;
         }
         return meal;
       });
-      return { meals: updatedMeals2 };
+
+      return { ...state, meals: updatedMeals2 };
 
     default:
       return state;

@@ -6,7 +6,7 @@ const MicroNutrientTracker = ({
   minMicronutrientIntake,
   calculateTotalMicro,
 }) => {
-  const [showProgressBars, setShowProgressBars] = useState(true);
+  const [showProgressBars, setShowProgressBars] = useState(false);
 
   const handleToggleProgressBars = () => {
     setShowProgressBars(!showProgressBars);

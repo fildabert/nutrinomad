@@ -4,7 +4,6 @@ const validator = require('validator');
 const UserModel = require('../models/user.model');
 const FoodDiaryModel = require('../models/foodDiary.model');
 const userValidator = require('../validators/user.validator');
-const multerUploads = require('../middlewares/multer');
 
 const hashPassword = async (password) => {
   if (!validator.isStrongPassword(password)) {
@@ -59,6 +58,8 @@ const signUp = async (userData) => {
 
   const hash = await hashPassword(password);
 
+  const date = new Date();
+  const formattedDate = date.toISOString().slice(0, 10).toString();
   const user = await UserModel.create({
     name,
     email,
@@ -69,6 +70,7 @@ const signUp = async (userData) => {
     weight,
     goal,
     activityLevel,
+    weightTracking: [{ weight, date: formattedDate }],
   });
 
   // Create a new food diary for the user
@@ -157,6 +159,27 @@ const updateUserById = async (id, userData) => {
       { ...value, password: user.password },
       { new: true }
     );
+
+    //weight tracking
+    if (value.weight && value !== user.weight) {
+      const date = new Date();
+      const formattedDate = date.toISOString().slice(0, 10).toString(); // format date as YYYY-MM-DD
+      const existingEntryIndex = updatedUser.weightTracking.findIndex(
+        (entry) => entry.date === formattedDate
+      );
+      if (existingEntryIndex > -1) {
+        // If an entry already exists for this date, overwrite it
+        updatedUser.weightTracking[existingEntryIndex].weight = value.weight;
+      } else {
+        // Otherwise, add a new entry to the array
+        updatedUser.weightTracking.push({
+          date: formattedDate,
+          weight: value.weight,
+        });
+      }
+      await updatedUser.save();
+    }
+
     if (value.avatar) {
       updatedUser.avatar = value.avatar;
       await updatedUser.save();
@@ -198,7 +221,6 @@ const updateUserPasswordById = async (id, currentPassword, newPassword) => {
       { password: hash },
       { new: true }
     );
-    await updatedUser.calculateBmrAndMacroIntake();
     return updatedUser;
   } catch (error) {
     throw error;
@@ -227,6 +249,52 @@ const uploadAvatar = async (id, avatar) => {
   }
 };
 
+const getWeightTracking = async (userId, startDate, endDate) => {
+  const user = await getUserById(userId);
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  const weightTracking = user.weightTracking.filter((record) => {
+    const date = Date.parse(record.date);
+    return date >= startDate && date <= endDate;
+  });
+  const formattedData = weightTracking.map((record) => ({
+    x: record.date,
+    y: record.weight,
+  }));
+
+  return formattedData;
+};
+
+const getTimeRange = (timeRange) => {
+  let startDate, endDate;
+
+  switch (timeRange) {
+    case '7days':
+      endDate = new Date();
+      startDate = new Date();
+      startDate.setDate(endDate.getDate() - 7);
+      break;
+    case '30days':
+      endDate = new Date();
+      startDate = new Date();
+      startDate.setDate(endDate.getDate() - 30);
+      break;
+    case '90days':
+      endDate = new Date();
+      startDate = new Date();
+      startDate.setDate(endDate.getDate() - 90);
+      break;
+    default:
+      startDate = req.query.startDate ? new Date(req.query.startDate) : null;
+      endDate = req.query.endDate ? new Date(req.query.endDate) : null;
+      break;
+  }
+
+  return { startDate, endDate };
+};
+
 const userService = {
   getAllUsers,
   getUserById,
@@ -237,6 +305,8 @@ const userService = {
   updateUserById,
   updateUserPasswordById,
   uploadAvatar,
+  getWeightTracking,
+  getTimeRange,
 };
 
 module.exports = userService;

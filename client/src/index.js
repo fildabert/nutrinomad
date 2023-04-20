@@ -16,6 +16,7 @@ import Dashboard from './pages/app/Dashboard';
 import Profile from './pages/app/Profile';
 import { UserContextProvider } from './context/UserContext';
 import { closeSnackbar, SnackbarProvider } from 'notistack';
+import ErrorPage from './pages/app/ErrorPage';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -51,6 +52,10 @@ const router = createBrowserRouter([
   {
     path: '/user/profile',
     element: <Profile />,
+  },
+  {
+    path: '*',
+    element: <ErrorPage />,
   },
 ]);
 

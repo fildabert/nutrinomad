@@ -95,7 +95,6 @@ const updateUser = async (req, res) => {
   }
 };
 
-//Update user password
 const updateUserPassword = async (req, res) => {
   const { id } = req.params;
   const { currentPassword, newPassword } = req.body;
@@ -115,11 +114,22 @@ const uploadAvatar = async (req, res) => {
   const avatar = req.file;
   try {
     const user = await userService.uploadAvatar(id, avatar);
-    console.log(avatar);
-    console.log(user);
     res.status(200).json(user);
   } catch (error) {
     res.status(400).json({ error: error.message });
+  }
+};
+
+const getWeightTracking = async (req, res) => {
+  const { id } = req.params;
+  const { timeRange } = req.query;
+  const { startDate, endDate } = userService.getTimeRange(timeRange);
+  try {
+    const data = await userService.getWeightTracking(id, startDate, endDate);
+
+    return res.status(200).json(data);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -133,4 +143,5 @@ module.exports = {
   updateUser,
   updateUserPassword,
   uploadAvatar,
+  getWeightTracking,
 };

@@ -6,7 +6,9 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Divider,
   FormControl,
+  Grid,
   InputLabel,
   MenuItem,
   OutlinedInput,
@@ -25,11 +27,11 @@ const NUTRIENT_ID = {
   SODIUM: 1093,
   CALCIUM: 1087,
   IRON: 1089,
-  VITAMIN_A: 1106,
-  VITAMIN_B12: 1178,
-  VITAMIN_C: 1162,
-  VITAMIN_D: 1114,
-  VITAMIN_E: 1109,
+  VITAMINA: 1106,
+  VITAMINB12: 1178,
+  VITAMINC: 1162,
+  VITAMIND: 1114,
+  VITAMINE: 1109,
 };
 const DiaryEntryForm = ({
   food,
@@ -43,6 +45,7 @@ const DiaryEntryForm = ({
   );
   const [quantity, setQuantity] = useState(1);
   const [mealType, setMealType] = useState(currentMealType);
+  const [showNutrients, setShowNutrients] = useState(false);
   const { user } = useContext(AuthContext);
 
   // Returns a nutrient based on it's id.
@@ -82,22 +85,38 @@ const DiaryEntryForm = ({
     return `${measure.gramWeight} grams`;
   };
 
+  const handleToggleNutrients = () => {
+    setShowNutrients(!showNutrients);
+  };
+
+  const nutrientKeys = [
+    'carbs',
+    'fat',
+    'protein',
+    'sugar',
+    'sodium',
+    'calcium',
+    'iron',
+    'vitaminA',
+    'vitaminB12',
+    'vitaminC',
+    'vitaminD',
+    'vitaminE',
+  ];
+
   const selectedFood = {
     name: food.description,
     servingSize: getFoodMeasurement(food),
     calories: getNutrientValue(NUTRIENT_ID.CALORIES, food) * quantity,
-    carbs: getNutrientValue(NUTRIENT_ID.CARBS, food) * quantity,
-    fat: getNutrientValue(NUTRIENT_ID.FAT, food) * quantity,
-    protein: getNutrientValue(NUTRIENT_ID.PROTEIN, food) * quantity,
-    sugar: getNutrientValue(NUTRIENT_ID.SUGAR, food) * quantity,
-    sodium: getNutrientValue(NUTRIENT_ID.SODIUM, food) * quantity,
-    calcium: getNutrientValue(NUTRIENT_ID.CALCIUM, food) * quantity,
-    iron: getNutrientValue(NUTRIENT_ID.IRON, food) * quantity,
-    vitaminA: getNutrientValue(NUTRIENT_ID.VITAMIN_A, food) * quantity,
-    vitaminB12: getNutrientValue(NUTRIENT_ID.VITAMIN_B12, food) * quantity,
-    vitaminC: getNutrientValue(NUTRIENT_ID.VITAMIN_C, food) * quantity,
-    vitaminD: getNutrientValue(NUTRIENT_ID.VITAMIN_D, food) * quantity,
-    vitaminE: getNutrientValue(NUTRIENT_ID.VITAMIN_E, food) * quantity,
+    ...nutrientKeys.reduce(
+      (acc, key) => ({
+        ...acc,
+        [key]: (
+          getNutrientValue(NUTRIENT_ID[key.toUpperCase()], food) * quantity
+        ).toFixed(2),
+      }),
+      {}
+    ),
     quantity: quantity,
     foodCategory: food.foodCategory,
   };
@@ -118,7 +137,7 @@ const DiaryEntryForm = ({
     <Dialog open={Boolean(food)}>
       <DialogTitle>Add to Diary</DialogTitle>
       <DialogContent>
-        <Typography variant="h6">{food.description}</Typography>
+        <Typography variant="h6">{`${food.description} - ${selectedFood.calories} kcal`}</Typography>
         <Box className="flex justify-center mt-4">
           <FormControl className="w-1/4">
             <InputLabel>Quantity</InputLabel>
@@ -151,9 +170,7 @@ const DiaryEntryForm = ({
             </Select>
           </FormControl>
         </Box>
-
         <Typography className="text-center my-6">for</Typography>
-
         <FormControl fullWidth>
           <InputLabel>Meal Type</InputLabel>
           <Select
@@ -167,6 +184,146 @@ const DiaryEntryForm = ({
             <MenuItem value="snack">Snack</MenuItem>
           </Select>
         </FormControl>
+        <Box className="flex justify-center my-4">
+          <Button onClick={handleToggleNutrients} variant="outlined">
+            {showNutrients ? 'Hide' : 'Show'} Nutrient Information
+          </Button>
+        </Box>
+
+        {showNutrients && (
+          <Box className="space-y-3">
+            <Box>
+              <Typography
+                variant="overline"
+                component="p"
+                className="text-center font-bold"
+              >
+                Macronutrients
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={4}>
+                  <Typography>
+                    <Typography
+                      component="span"
+                      className="font-bold text-protein-red"
+                    >
+                      Protein:{' '}
+                    </Typography>
+                    {selectedFood.protein} g
+                  </Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography>
+                    <Typography
+                      component="span"
+                      className="font-bold text-fat-yellow"
+                    >
+                      Fat:{' '}
+                    </Typography>
+                    {selectedFood.fat} g
+                  </Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography>
+                    <Typography
+                      component="span"
+                      className="font-bold text-carbs-green"
+                    >
+                      Carbs:{' '}
+                    </Typography>
+                    {selectedFood.carbs} g
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Box>
+
+            <Divider />
+
+            <Box>
+              <Typography
+                variant="overline"
+                component="p"
+                className="text-center font-bold"
+              >
+                Micronutrients
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={4}>
+                  <Typography>
+                    <Typography component="span" className="font-bold">
+                      Sugar:{' '}
+                    </Typography>
+                    {selectedFood.sugar} g
+                  </Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography>
+                    <Typography component="span" className="font-bold">
+                      Sodium:{' '}
+                    </Typography>
+                    {selectedFood.sodium} mg
+                  </Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography>
+                    <Typography component="span" className="font-bold">
+                      Calcium:{' '}
+                    </Typography>
+                    {selectedFood.calcium} mg
+                  </Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography>
+                    <Typography component="span" className="font-bold">
+                      Iron:{' '}
+                    </Typography>
+                    {selectedFood.iron} mg
+                  </Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography>
+                    <Typography component="span" className="font-bold">
+                      Vitamin A:{' '}
+                    </Typography>
+                    {selectedFood.vitaminA} μg
+                  </Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography>
+                    <Typography component="span" className="font-bold">
+                      Vitamin B12:{' '}
+                    </Typography>
+                    {selectedFood.vitaminB12} μg
+                  </Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography>
+                    <Typography component="span" className="font-bold">
+                      Vitamin C:{' '}
+                    </Typography>
+                    {selectedFood.vitaminC} mg
+                  </Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography>
+                    <Typography component="span" className="font-bold">
+                      Vitamin D:{' '}
+                    </Typography>
+                    {selectedFood.vitaminD} μg
+                  </Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography>
+                    <Typography component="span" className="font-bold">
+                      Vitamin E:{' '}
+                    </Typography>
+                    {selectedFood.vitaminE} mg
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Box>
+          </Box>
+        )}
       </DialogContent>
       <DialogActions>
         <Button onClick={onCancel}>Cancel</Button>

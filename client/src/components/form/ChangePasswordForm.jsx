@@ -19,13 +19,17 @@ import { useState } from 'react';
 import axios from 'axios';
 
 const ChangePasswordForm = ({ onCancel, userData, onClose }) => {
-  const [showPassword, setShowPassword] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [error, setError] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const handleClickShowCurrentPassword = () =>
+    setShowCurrentPassword((show) => !show);
+
+  const handleClickShowNewPassword = () => setShowNewPassword((show) => !show);
 
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
@@ -65,17 +69,17 @@ const ChangePasswordForm = ({ onCancel, userData, onClose }) => {
             <FormControl variant="outlined" className="my-4">
               <InputLabel>Current Password</InputLabel>
               <OutlinedInput
-                type={showPassword ? 'text' : 'password'}
+                type={showCurrentPassword ? 'text' : 'password'}
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 value={currentPassword}
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
-                      onClick={handleClickShowPassword}
+                      onClick={handleClickShowCurrentPassword}
                       onMouseDown={handleMouseDownPassword}
                       edge="end"
                     >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                      {showCurrentPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
                   </InputAdornment>
                 }
@@ -89,17 +93,17 @@ const ChangePasswordForm = ({ onCancel, userData, onClose }) => {
             <FormControl variant="outlined" className="my-4">
               <InputLabel>New Password</InputLabel>
               <OutlinedInput
-                type={showPassword ? 'text' : 'password'}
+                type={showNewPassword ? 'text' : 'password'}
                 onChange={(e) => setNewPassword(e.target.value)}
                 value={newPassword}
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
-                      onClick={handleClickShowPassword}
+                      onClick={handleClickShowNewPassword}
                       onMouseDown={handleMouseDownPassword}
                       edge="end"
                     >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                      {showNewPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
                   </InputAdornment>
                 }

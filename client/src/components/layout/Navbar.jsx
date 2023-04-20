@@ -1,4 +1,4 @@
-import { Box, Link } from '@mui/material';
+import { Box, Button, Link } from '@mui/material';
 import { ReactComponent as NutriNomadLogo } from '../../assets/images/nutrinomad.svg';
 import { useAuthContext } from '../../hooks/useAuthContext';
 import { useLocation } from 'react-router-dom';
@@ -14,7 +14,10 @@ const Navbar = () => {
         <NutriNomadLogo className="w-40" />
       </Link>
       {user && (
-        <Box className="flex">
+        <Box className="flex space-x-8">
+          <Button variant="outlined" href="/food/diary">
+            Food Diary
+          </Button>
           <AvatarPopover />
         </Box>
       )}

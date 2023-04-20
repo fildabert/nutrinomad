@@ -35,7 +35,6 @@ const FoodDiary = () => {
   const [minMicronutrientIntake, setMinMicronutrientIntake] = useState({});
   const [isLoading, setIsLoading] = useState(true);
 
-  // Get necessary data from context
   const { user } = useAuthContext();
   const { meals, dispatch: mealDispatch } = useMealContext();
 
@@ -122,7 +121,6 @@ const FoodDiary = () => {
   const renderMealsByType = (mealType) => {
     const mealTypeMeals = meals.filter((meal) => meal.mealType === mealType);
     const foodsIsEmpty = mealTypeMeals.some((meal) => meal.foods.length === 0);
-
     if (isLoading) {
       return (
         <Box className="my-2 flex justify-center">
@@ -179,7 +177,7 @@ const FoodDiary = () => {
 
   const MealCard = ({ mealType }) => {
     return (
-      <Card className="bg-green-50 p-4 rounded-3xl w-full my-2">
+      <Card key={mealType} className="bg-green-50 p-4 rounded-3xl w-full my-2">
         <Typography variant="h6" align="center">
           {/* Set uppercase to the first character */}
           {mealType.charAt(0).toUpperCase() + mealType.slice(1)}

@@ -21,7 +21,7 @@ const CaloriesChart = ({ user }) => {
   }, []);
 
   return (
-    <Box className="w-full h-2/5 mb-8">
+    <Box className="w-full h-96 mb-8">
       <Card className="h-full p-10">
         <Typography variant="h6">Calories consumed last 7 days</Typography>
         {loading ? (

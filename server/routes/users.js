@@ -9,6 +9,7 @@ const {
   updateUser,
   uploadAvatar,
   updateUserPassword,
+  getWeightTracking,
 } = require('../controllers/user.controller');
 const upload = require('../middlewares/multer');
 
@@ -17,6 +18,8 @@ const router = express.Router();
 router.get('/', getUsers);
 
 router.get('/:id', getUser);
+
+router.get('/weight/:id', getWeightTracking);
 
 router.post('/signIn', signInUser);
 

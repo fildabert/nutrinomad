@@ -97,6 +97,16 @@ const userSchema = new Schema(
     avatar: {
       type: String,
     },
+    weightTracking: [
+      {
+        date: {
+          type: String,
+        },
+        weight: {
+          type: Number,
+        },
+      },
+    ],
     foodDiary: { type: Schema.Types.ObjectId, ref: 'FoodDiary' },
   },
   { timestamps: true }

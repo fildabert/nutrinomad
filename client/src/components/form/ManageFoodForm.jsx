@@ -62,13 +62,16 @@ const ManageFoodForm = ({ foodData, meal, open, onClose, date }) => {
           foods: [foodData],
         }
       );
-      // console.log(meal);
-      // console.log(response.data);
-      // console.log(meals);
-      // mealDispatch({
-      //   type: MEAL_ACTIONS.UPDATE_MEAL,
-      //   payload: response.data,
-      // });
+      mealDispatch({
+        type: MEAL_ACTIONS.UPDATE_MEAL,
+        payload: {
+          mealId: meal._id,
+          foodId: foodData._id,
+          quantity: quantity,
+          mealType: mealType,
+        },
+      });
+
       onClose();
     } catch (error) {
       console.error(error);
