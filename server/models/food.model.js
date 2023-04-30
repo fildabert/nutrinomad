@@ -23,7 +23,35 @@ const foodSchema = new Schema({
     set: function (newQuantity) {
       if (this.quantity !== undefined) {
         this.quantity = 1;
-        const ratio = newQuantity / this.quantity;
+        const ratio = newQuantity / this.quantity; // useless line of code, ratio will always be whatever newQuantity is since it will always divide by 1
+
+        /*
+          Problems IF THIS CODE IS RAN EVERYTIME A FOOD IS UPDATED, 
+          -- if it only runs once or only used for calculating nutritional facts during a GET request, then its fine, ignore this: --
+            - this only allows for 1 time update, more than that the nutrition facts will be invalid
+
+            consider this:
+            FIRST CREATE:
+            {
+              "name": "apple",
+              calories: 10
+              quantity: 1
+            }
+
+            FIRST UPDATE quantity -> 2
+            {
+              "name": "apple",
+              calories: 10 -> 20 [this.calories * ratio (10 * 2)]
+              quantity: 1 -> 2
+            }
+
+            SECOND UPDATE quantity -> 3
+            {
+              "name": "apple",
+              calories: 20 -> 60 [this.calories * ratio (20 * 3)]
+              quantity: 2 -> 3
+            }
+        */
         this.calories = (this.calories * ratio).toFixed(2);
         this.carbs = (this.carbs * ratio).toFixed(2);
         this.fat = (this.fat * ratio).toFixed(2);

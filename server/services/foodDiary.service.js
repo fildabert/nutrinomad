@@ -221,6 +221,11 @@ const editMealFromDiary = async (userId, foodId, mealData) => {
     const mealToUpdate = await getMealById(mealData.mealId);
 
     // If the meal type is not changed, edit the food
+    /*
+      Problems:
+        - updating a simple mealType and food quantity shouldnt be this complex
+        - current database design approach might be the main reason why a supposedly simple update task is made this complex
+    */
     if (mealData.mealType !== mealToUpdate.mealType) {
       const updatedFood = await foodService.editFoodById(
         foodId,
@@ -228,6 +233,7 @@ const editMealFromDiary = async (userId, foodId, mealData) => {
       );
 
       // if the meal already exist, insert the food.
+      // problem: might get meal of different user
       const existingMeal = await mealService.getMealByMealTypeAndDate(
         mealData.mealType,
         mealData.date
@@ -245,6 +251,7 @@ const editMealFromDiary = async (userId, foodId, mealData) => {
         }
       } else {
         //If the meal type is changed, create a new meal with the updated food
+        // problem: why not just update the meal object instead of creating a new one and deleting the old one?
         const updatedMeal = await mealService.createMeal({
           date: mealData.date,
           mealType: mealData.mealType,

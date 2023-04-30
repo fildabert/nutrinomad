@@ -29,6 +29,8 @@ const mealSchema = new Schema({
 });
 
 mealSchema.pre('save', async function (next) {
+  // problem: this may be just a personal preference, but it is not a good idea to use pre save hooks to operations like this
+  // as it may cause a surprise to other developers that may not know that this hook exists
   if (this.foods.length === 0) {
     try {
       await this.remove();
