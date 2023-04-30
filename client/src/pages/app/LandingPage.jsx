@@ -12,7 +12,7 @@ const LandingPage = () => {
       <Container maxWidth="md">
         <Navbar />
         <Box>
-          <Box className="flex flex-row justify-between items-center my-20">
+          <Box className="md:flex flex-row justify-between items-center my-20">
             <Box className="flex-1 p-10">
               <Typography variant="h1" className="text-4xl font-bold mb-2">
                 Empowering healthy journeys, one bite at a time.
@@ -33,19 +33,13 @@ const LandingPage = () => {
               <img
                 src={illustration1}
                 alt="Illustration"
-                className="w-3/4"
+                className="w-1/2 md:w-3/4"
               ></img>
             </Box>
           </Box>
 
-          <Box className="flex flex-row justify-between items-center my-20">
-            <Box className="flex-1 flex justify-center items-center">
-              <img
-                src={illustration2}
-                alt="Illustration"
-                className="w-3/4"
-              ></img>
-            </Box>
+          {/* Switch the order of the elements on smaller screens */}
+          <Box className="md:flex flex-row-reverse justify-between items-center my-20">
             <Box className="flex-1 p-10">
               <Typography variant="h1" className="text-4xl font-bold mb-2">
                 Personalized nutrition insights.
@@ -55,9 +49,17 @@ const LandingPage = () => {
                 and wellness goals.
               </Typography>
             </Box>
+            <Box className="flex-1 flex justify-center items-center">
+              <img
+                src={illustration2}
+                alt="Illustration"
+                className="w-1/2 md:w-3/4"
+              ></img>
+            </Box>
           </Box>
 
-          <Box className="flex flex-row justify-between items-center my-20">
+          {/* Switch the order of the elements on smaller screens */}
+          <Box className="md:flex flex-row justify-between items-center my-20">
             <Box className="flex-1 p-10">
               <Typography variant="h1" className="text-4xl font-bold mb-2">
                 Calorie and macronutrient tracking.
@@ -71,7 +73,7 @@ const LandingPage = () => {
               <img
                 src={illustration3}
                 alt="Illustration"
-                className="w-3/4"
+                className="w-1/2 md:w-3/4"
               ></img>
             </Box>
           </Box>

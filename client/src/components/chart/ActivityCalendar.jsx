@@ -1,5 +1,5 @@
-import { Box, Card, Skeleton, Typography } from '@mui/material';
-import { ResponsiveCalendar } from '@nivo/calendar';
+import { Box, Button, Card, Skeleton, Typography } from '@mui/material';
+import { ResponsiveCalendar, ResponsiveTimeRange } from '@nivo/calendar';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
@@ -17,6 +17,26 @@ const ActivityCalendar = ({ user }) => {
     fetchData();
   }, []);
 
+  const getFromTo = () => {
+    const now = new Date();
+    const from = new Date(now);
+    const to = new Date(now);
+
+    from.setFullYear(now.getFullYear());
+    from.setMonth(0);
+    from.setDate(1);
+    to.setFullYear(now.getFullYear());
+    to.setMonth(11);
+    to.setDate(31);
+
+    return {
+      from: from.toISOString().slice(0, 10),
+      to: to.toISOString().slice(0, 10),
+    };
+  };
+
+  const { from, to } = getFromTo();
+
   return (
     <Box className="mb-8 h-96 w-full">
       <Card className="h-full p-10">
@@ -24,10 +44,10 @@ const ActivityCalendar = ({ user }) => {
         {loading ? (
           <Skeleton className="h-full" />
         ) : (
-          <ResponsiveCalendar
+          <ResponsiveTimeRange
             data={data}
-            from="2023-01-01"
-            to="2023-12-31"
+            from={from}
+            to={to}
             emptyColor="#eeeeee"
             colors={[
               'rgba(25, 255, 25, 0.2)',

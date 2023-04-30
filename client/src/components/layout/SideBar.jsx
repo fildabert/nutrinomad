@@ -16,6 +16,7 @@ import {
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import LocalDiningIcon from '@mui/icons-material/LocalDining';
 import FoodBankIcon from '@mui/icons-material/FoodBank';
+import ArticleIcon from '@mui/icons-material/Article';
 import { ReactComponent as NutriNomadLogo } from '../../assets/images/nutrinomad.svg';
 import { useAuthContext } from '../../hooks/useAuthContext';
 import { useEffect, useState } from 'react';
@@ -25,7 +26,7 @@ import useUserContext from '../../hooks/useUserContext';
 
 const drawerWidth = 280;
 
-const paths = ['/food/dashboard', '/food/diary', '/food/search'];
+const paths = ['/food/dashboard', '/food/diary', '/food/search', '/articles'];
 
 const SideBar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -132,6 +133,12 @@ const SideBar = () => {
                 icon: <FoodBankIcon fontSize="inherit" />,
                 index: 2,
                 path: paths[2],
+              },
+              {
+                text: 'Articles',
+                icon: <ArticleIcon fontSize="inherit" />,
+                index: 3,
+                path: paths[3],
               },
             ].map((item) => (
               <ListItem key={item.text} className="p-2">

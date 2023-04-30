@@ -6,7 +6,7 @@ const CalorieCounter = ({ bmr, totalCalories }) => {
   const remainingCalories = goalCalorie - calorieConsumed;
 
   return (
-    <Card className="w-2/5 m-auto p-4">
+    <Card className="w-full md:w-3/4 lg:w-1/2 xl:w-2/5 m-auto p-4">
       <Box className="flex justify-between items-center text-center px-16">
         <Box>
           <Typography variant="h5">{goalCalorie}</Typography>

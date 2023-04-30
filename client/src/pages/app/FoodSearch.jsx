@@ -185,7 +185,6 @@ const FoodSearch = () => {
     return (
       <>
         {/* Render the search results */}
-        <Typography variant="h6">Search Results</Typography>
         <List>
           {currentFoods.map((food) => (
             <FoodCard
@@ -292,6 +291,8 @@ const FoodSearch = () => {
         {error && <Typography color="error">{error}</Typography>}
 
         {history.length > 0 && renderFoodHistory()}
+
+        <Typography variant="h6">Search Results</Typography>
 
         {foods.length === 0 && !error && (
           <Box>

@@ -9,13 +9,17 @@ const Navbar = () => {
   const { user } = useAuthContext();
 
   return (
-    <Box className="p-2 pt-4 flex justify-between flex-wrap">
+    <Box className="p-2 pt-4 flex justify-between items-center flex-wrap">
       <Link href="/">
-        <NutriNomadLogo className="w-40" />
+        <NutriNomadLogo className="w-32 sm:w-40" />
       </Link>
       {user && (
-        <Box className="flex space-x-8">
-          <Button variant="outlined" href="/food/diary">
+        <Box className="flex space-x-4 sm:space-x-8">
+          <Button
+            variant="outlined"
+            href="/food/diary"
+            className="text-xs sm:text-sm"
+          >
             Food Diary
           </Button>
           <AvatarPopover />

@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 const mongoose = require('mongoose');
 const app = express();
 const userRoutes = require('./routes/users');
@@ -8,6 +9,7 @@ const foodRoutes = require('./routes/food');
 const mealRoutes = require('./routes/meal');
 
 //middleware
+app.use(cors());
 app.use(express.json());
 app.use(express.json({ limit: '50mb' }));
 app.use(

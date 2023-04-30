@@ -1,7 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import {
+  BrowserRouter,
+  createBrowserRouter,
+  Route,
+  Router,
+  RouterProvider,
+  Routes,
+} from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material';
 import LandingPage from './pages/app/LandingPage';
 import SignIn from './pages/auth/SignIn';
@@ -17,47 +24,10 @@ import Profile from './pages/app/Profile';
 import { UserContextProvider } from './context/UserContext';
 import { closeSnackbar, SnackbarProvider } from 'notistack';
 import ErrorPage from './pages/app/ErrorPage';
+import ArticlesPage from './pages/app/ArticlesPage';
+import Article from './pages/app/Article';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <LandingPage />,
-  },
-  {
-    path: '/sign-up',
-    element: <SignUp />,
-  },
-  {
-    path: '/sign-in',
-    element: <SignIn />,
-  },
-  {
-    path: '/sign-up/success',
-    element: <SignUpSuccess />,
-  },
-  {
-    path: '/food/diary',
-    element: <FoodDiary />,
-  },
-  {
-    path: '/food/search',
-    element: <FoodSearch />,
-  },
-  {
-    path: '/food/dashboard',
-    element: <Dashboard />,
-  },
-  {
-    path: '/user/profile',
-    element: <Profile />,
-  },
-  {
-    path: '*',
-    element: <ErrorPage />,
-  },
-]);
 
 const theme = createTheme({
   palette: {
@@ -84,18 +54,38 @@ const theme = createTheme({
   },
 });
 
-root.render(
-  <React.StrictMode>
+const App = () => {
+  return (
     <ThemeProvider theme={theme}>
       <AuthContextProvider>
         <UserContextProvider>
           <MealContextProvider>
             <SnackbarProvider maxSnack={4} preventDuplicate>
-              <RouterProvider router={router} />
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<LandingPage />} />
+                  <Route path="/sign-up" element={<SignUp />} />
+                  <Route path="/sign-in" element={<SignIn />} />
+                  <Route path="/sign-up/success" element={<SignUpSuccess />} />
+                  <Route path="/food/diary" element={<FoodDiary />} />
+                  <Route path="/food/search" element={<FoodSearch />} />
+                  <Route path="/food/dashboard" element={<Dashboard />} />
+                  <Route path="/user/profile" element={<Profile />} />
+                  <Route path="/articles" element={<ArticlesPage />} />
+                  <Route path="/articles/:title" element={<Article />} />
+                  <Route path="*" element={<ErrorPage />} />
+                </Routes>
+              </BrowserRouter>
             </SnackbarProvider>
           </MealContextProvider>
         </UserContextProvider>
       </AuthContextProvider>
     </ThemeProvider>
+  );
+};
+
+root.render(
+  <React.StrictMode>
+    <App />
   </React.StrictMode>
 );

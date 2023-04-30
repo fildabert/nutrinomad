@@ -9,10 +9,12 @@ import {
   Divider,
   FormControl,
   Grid,
+  InputAdornment,
   InputLabel,
   MenuItem,
   OutlinedInput,
   Select,
+  TextField,
   Typography,
 } from '@mui/material';
 import axios from 'axios';
@@ -46,8 +48,11 @@ const DiaryEntryForm = ({
   const [quantity, setQuantity] = useState(1);
   const [mealType, setMealType] = useState(currentMealType);
   const [showNutrients, setShowNutrients] = useState(false);
+  const [customMeasurement, setCustomMeasurement] = useState(false);
+  const [customServingSize, setCustomServingSize] = useState('');
   const { user } = useContext(AuthContext);
 
+  console.log(food);
   // Returns a nutrient based on it's id.
   const getNutrientValue = (nutrientId, food) => {
     const nutrient = food.foodNutrients.find(
@@ -59,8 +64,9 @@ const DiaryEntryForm = ({
 
     // Returns the adjusted nutrient value based on the gram weight of the serving size
 
-    const measure = selectedServingSize;
-    const gramWeight = measure?.gramWeight || 100; // set default gramWeight to 100 if it doesn't exist
+    const gramWeight = customMeasurement
+      ? customServingSize
+      : selectedServingSize.gramWeight || 100; // set default gramWeight to 100 if it doesn't exist
     const nutrientsPer100g = nutrient.value;
     let nutrients = (nutrientsPer100g / 100) * gramWeight;
 
@@ -78,6 +84,10 @@ const DiaryEntryForm = ({
     const measure = selectedServingSize;
     if (!measure) return '';
 
+    if (customMeasurement) {
+      return `${customServingSize} grams`;
+    }
+
     if (measure.disseminationText !== 'Quantity not specified') {
       return measure.disseminationText;
     }
@@ -87,6 +97,10 @@ const DiaryEntryForm = ({
 
   const handleToggleNutrients = () => {
     setShowNutrients(!showNutrients);
+  };
+
+  const toggleCustomMeasurement = () => {
+    setCustomMeasurement(!customMeasurement);
   };
 
   const nutrientKeys = [
@@ -137,7 +151,13 @@ const DiaryEntryForm = ({
     <Dialog open={Boolean(food)}>
       <DialogTitle>Add to Diary</DialogTitle>
       <DialogContent>
-        <Typography variant="h6">{`${food.description} - ${selectedFood.calories} kcal`}</Typography>
+        <Box className="flex justify-between">
+          <Typography variant="h6">{`${food.description} - ${selectedFood.calories} kcal`}</Typography>
+          <Button onClick={toggleCustomMeasurement}>
+            Enter custom measurement
+          </Button>
+        </Box>
+
         <Box className="flex justify-center mt-4">
           <FormControl className="w-1/4">
             <InputLabel>Quantity</InputLabel>
@@ -153,22 +173,38 @@ const DiaryEntryForm = ({
 
           <Typography className="p-4">servings of</Typography>
 
-          <FormControl className="w-1/2">
-            <InputLabel>Serving Size</InputLabel>
-            <Select
-              value={selectedServingSize}
-              label="Serving Size"
-              onChange={(e) => setSelectedServingSize(e.target.value)}
-            >
-              {food.foodMeasures.map((measure) => (
-                <MenuItem key={measure.id} value={measure}>
-                  {measure.disseminationText === 'Quantity not specified'
-                    ? `${measure.gramWeight} grams`
-                    : measure.disseminationText}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          {customMeasurement ? (
+            <FormControl className="w-2/5">
+              <InputLabel>Serving Size</InputLabel>
+              <OutlinedInput
+                value={customServingSize}
+                type="number"
+                inputProps={{ min: 1 }}
+                endAdornment={
+                  <InputAdornment position="end">grams</InputAdornment>
+                }
+                label="Serving Size"
+                onChange={(e) => setCustomServingSize(e.target.value)}
+              />
+            </FormControl>
+          ) : (
+            <FormControl className="w-1/2">
+              <InputLabel>Serving Size</InputLabel>
+              <Select
+                value={selectedServingSize}
+                label="Serving Size"
+                onChange={(e) => setSelectedServingSize(e.target.value)}
+              >
+                {food.foodMeasures.map((measure) => (
+                  <MenuItem key={measure.id} value={measure}>
+                    {measure.disseminationText === 'Quantity not specified'
+                      ? `${measure.gramWeight} grams`
+                      : measure.disseminationText}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
         </Box>
         <Typography className="text-center my-6">for</Typography>
         <FormControl fullWidth>

@@ -164,7 +164,7 @@ userSchema.methods.calculateBmrAndMacroIntake = function () {
 
 //Calculate daily micronutrient intake
 userSchema.methods.calculateMinMicroIntake = function () {
-  const { sex, age } = this;
+  const { sex, age, bmr } = this;
 
   // Recommended Dietary Allowance (RDA) for each nutrient based on sex and age
   const rdas = {
@@ -177,7 +177,7 @@ userSchema.methods.calculateMinMicroIntake = function () {
     vitaminD: age <= 70 ? 15 : 23,
     vitaminE: 15,
     sodium: 1500,
-    sugar: sex === 'male' ? 36 : 25,
+    sugar: Math.round((bmr * 0.1) / 4), // 10% of bmr (1 gram sugar is 4 calories)
   };
 
   // Set minimum intake for each nutrient

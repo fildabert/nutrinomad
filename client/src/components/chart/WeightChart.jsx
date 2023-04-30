@@ -1,12 +1,13 @@
 import { Box, Button, Card, Skeleton, Typography } from '@mui/material';
 import { ResponsiveScatterPlot } from '@nivo/scatterplot';
+import { ResponsiveLine } from '@nivo/line';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 const WeightChart = ({ user }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [timeRange, setTimeRange] = useState('7days');
+  const [timeRange, setTimeRange] = useState('30days');
 
   const fetchData = async () => {
     try {
@@ -70,15 +71,10 @@ const WeightChart = ({ user }) => {
         {loading ? (
           <Skeleton className="h-full" />
         ) : (
-          <ResponsiveScatterPlot
+          <ResponsiveLine
             data={data}
             margin={{ top: 40, right: 60, bottom: 50, left: 60 }}
-            xScale={{
-              type: 'time',
-              format: '%Y-%m-%d',
-              precision: 'day',
-              useUTC: false, // disable UTC
-            }}
+            xScale={{ type: 'point' }}
             yScale={{
               type: 'linear',
               min: minWeight - 10,
@@ -86,8 +82,6 @@ const WeightChart = ({ user }) => {
             }}
             axisBottom={{
               orient: 'bottom',
-              format: '%b %d', // use full date format
-              tickValues: 'every day', // set tick values to every day
               tickSize: 5,
               tickPadding: 5,
               legend: 'Date',
@@ -104,13 +98,14 @@ const WeightChart = ({ user }) => {
               legendPosition: 'middle',
             }}
             colors={['#00b900']}
-            nodeSize={8}
-            blendMode="multiply"
-            enableGridX={false}
-            enableGridY={true}
-            useMesh={false}
-            tooltip={({ node }) => {
-              const { data } = node;
+            pointSize={6}
+            pointBorderWidth={2}
+            pointBorderColor={{ from: 'serieColor' }}
+            pointLabelYOffset={-12}
+            useMesh={true}
+            enableCrosshair={false}
+            tooltip={({ point }) => {
+              const { data } = point;
               const formattedX = new Date(data.x).toLocaleDateString();
               const formattedY = data.y;
               return (
